@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCM 辅助诊断 Agent — 系统设计</title>
+<style>
+  /* ============================================
+     CSS Custom Properties & Reset
+     ============================================ */
+  :root {
+    --red-900: #5c0000;
+    --red-800: #8B0000;
+    --red-700: #A52A2A;
+    --red-600: #C41E3A;
+    --red-500: #DC2626;
+    --red-100: #FEE2E2;
+    --red-50: #FEF2F2;
+    --gold-700: #8B6914;
+    --gold-600: #B8860B;
+    --gold-500: #D4A843;
+    --gold-200: #F5E6B8;
+    --gold-100: #FDF3D0;
+    --green-800: #2D5A2D;
+    --green-700: #3D7A3D;
+    --green-600: #5B8C5A;
+    --green-500: #7CA97C;
+    --green-100: #E8F5E8;
+    --green-50: #F3FAF3;
+    --slate-900: #0F172A;
+    --slate-800: #1E293B;
+    --slate-700: #334155;
+    --slate-600: #475569;
+    --slate-500: #64748B;
+    --slate-400: #94A3B8;
+    --slate-300: #CBD5E1;
+    --slate-200: #E2E8F0;
+    --slate-100: #F1F5F9;
+    --slate-50: #F8FAFC;
+    --cream: #FAF8F5;
+    --cream-dark: #F0ECE4;
+    --white: #FFFFFF;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    --font-mono: "SF Mono", "Fira Code", "Consolas", monospace;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.05);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -2px rgba(0,0,0,.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,.08),0 4px 6px -4px rgba(0,0,0,.04);
+    --shadow-xl: 0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.04);
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --transition: .2s ease;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body {
+    font-family: var(--font-sans);
+    color: var(--slate-800);
+    background: var(--cream);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ============================================
+     Layout Utilities
+     ============================================ */
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  .container-wide { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  section { padding: 80px 0; }
+  section + section { border-top: 1px solid var(--slate-200); }
+
+  /* ============================================
+     Typography
+     ============================================ */
+  h1, h2, h3, h4 { font-weight: 700; line-height: 1.3; letter-spacing: -.02em; }
+  h1 { font-size: clamp(2rem, 5vw, 3rem); }
+  h2 { font-size: clamp(1.5rem, 3vw, 2rem); margin-bottom: 12px; }
+  h3 { font-size: 1.25rem; margin-bottom: 8px; }
+  h4 { font-size: 1.05rem; margin-bottom: 6px; }
+  p { margin-bottom: 16px; color: var(--slate-700); }
+  a { color: var(--red-600); text-decoration: none; transition: var(--transition); }
+  a:hover { color: var(--red-800); }
+  code {
+    font-family: var(--font-mono);
+    font-size: .875em;
+    background: var(--slate-100);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--red-700);
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+    font-size: .8125rem;
+  }
+  strong { color: var(--slate-900); }
+  .text-small { font-size: .875rem; color: var(--slate-500); }
+
+  .section-label {
+    display: inline-block;
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--red-600);
+    margin-bottom: 8px;
+    background: var(--red-50);
+    padding: 2px 10px;
+    border-radius: 20px;
+  }
+
+  /* ============================================
+     Hero
+     ============================================ */
+  .hero {
+    background: linear-gradient(135deg, var(--slate-900) 0%, #1a1a2e 50%, #16213e 100%);
+    color: var(--white);
+    padding: 100px 0 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 80% 20%, rgba(196,30,58,.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(91,140,90,.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero .container-wide { position: relative; z-index: 1; }
+  .hero h1 {
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--gold-500), #F0A030);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero .subtitle {
+    font-size: 1.1rem;
+    color: var(--slate-300);
+    margin-bottom: 24px;
+  }
+  .hero .meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-size: .875rem;
+    color: var(--slate-400);
+  }
+  .hero .meta span { display: flex; align-items: center; gap: 6px; }
+
+  .hero-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 32px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
+  .hero-nav a {
+    font-size: .8125rem;
+    color: var(--slate-400);
+    padding: 6px 14px;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 20px;
+    transition: var(--transition);
+  }
+  .hero-nav a:hover {
+    color: var(--white);
+    border-color: var(--red-600);
+    background: rgba(196,30,58,.15);
+  }
+
+  /* ============================================
+     Cards
+     ============================================ */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+  }
+  .card:hover { box-shadow: var(--shadow-md); }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .card-grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .card-grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+  .card-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem;
+    margin-bottom: 14px;
+    font-weight: 700;
+  }
+  .card-icon.red { background: var(--red-100); color: var(--red-600); }
+  .card-icon.green { background: var(--green-100); color: var(--green-700); }
+  .card-icon.gold { background: var(--gold-100); color: var(--gold-700); }
+  .card-icon.slate { background: var(--slate-100); color: var(--slate-600); }
+
+  .card h3 { font-size: 1.05rem; margin-bottom: 8px; }
+  .card p { font-size: .9rem; color: var(--slate-600); margin-bottom: 0; }
+
+  /* ============================================
+     Diagrams - Architecture Flow
+     ============================================ */
+  .arch-flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding: 32px 0;
+    position: relative;
+  }
+  .arch-flow .layer {
+    width: 100%;
+    max-width: 680px;
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    text-align: center;
+    position: relative;
+  }
+  .arch-flow .layer .layer-label {
+    font-weight: 700;
+    font-size: .9rem;
+    letter-spacing: .02em;
+  }
+  .arch-flow .layer .layer-desc {
+    font-size: .8rem;
+    margin-top: 4px;
+    opacity: .75;
+  }
+  .arch-flow .layer.l1 { background: #1a1a2e; color: #e2e8f0; }
+  .arch-flow .layer.l2 { background: var(--red-800); color: var(--white); }
+  .arch-flow .layer.l3 { background: var(--gold-600); color: var(--white); }
+  .arch-flow .layer.l4 { background: var(--green-700); color: var(--white); }
+
+  .arch-flow .arrow-down {
+    width: 2px; height: 32px;
+    background: var(--slate-300);
+    position: relative;
+  }
+  .arch-flow .arrow-down::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--slate-300);
+  }
+  .arch-flow .arrow-down.arrow-vertical {
+    width: 2px; height: 28px;
+    background: var(--slate-300);
+  }
+
+  /* Internal sub-flow within a layer */
+  .flow-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .flow-row .flow-item {
+    background: rgba(255,255,255,.15);
+    border-radius: var(--radius-sm);
+    padding: 6px 14px;
+    font-size: .8rem;
+    white-space: nowrap;
+  }
+  .flow-row .flow-arrow {
+    color: rgba(255,255,255,.4);
+    font-size: .8rem;
+  }
+
+  /* ============================================
+     Table styling
+     ============================================ */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 20px 0;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--slate-200);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .875rem;
+  }
+  thead { background: var(--slate-100); }
+  th {
+    text-align: left;
+    padding: 12px 16px;
+    font-weight: 600;
+    color: var(--slate-700);
+    border-bottom: 2px solid var(--slate-200);
+    white-space: nowrap;
+  }
+  td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--slate-200);
+    color: var(--slate-700);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--slate-50); }
+  td .tag {
+    display: inline-block;
+    font-size: .75rem;
+    font-weight: 600;
+    padding: 1px 8px;
+    border-radius: 4px;
+    margin-right: 4px;
+  }
+  .tag.green { background: var(--green-100); color: var(--green-700); }
+  .tag.red { background: var(--red-100); color: var(--red-600); }
+  .tag.gold { background: var(--gold-100); color: var(--gold-700); }
+
+  /* ============================================
+     Code blocks
+     ============================================ */
+  .code-block {
+    background: var(--slate-900);
+    color: #e2e8f0;
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    margin: 16px 0;
+    overflow-x: auto;
+    font-size: .8rem;
+    line-height: 1.6;
+    font-family: var(--font-mono);
+  }
+  .code-block .comment { color: var(--slate-500); font-style: italic; }
+  .code-block .key { color: #93c5fd; }
+  .code-block .string { color: #a7f3d0; }
+  .code-block .bool { color: #fde68a; }
+  .code-block .bracket { color: var(--slate-300); }
+
+  /* ============================================
+     Highlight box
+     ============================================ */
+  .highlight-box {
+    border-left: 4px solid var(--red-600);
+    background: var(--red-50);
+    padding: 16px 20px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    margin: 16px 0;
+  }
+  .highlight-box.green { border-left-color: var(--green-600); background: var(--green-50); }
+  .highlight-box.gold { border-left-color: var(--gold-600); background: var(--gold-100); }
+  .highlight-box h4 { margin-bottom: 4px; color: var(--slate-900); }
+  .highlight-box p { margin-bottom: 0; font-size: .9rem; }
+  .highlight-box p + p { margin-top: 8px; }
+
+  /* ============================================
+     Step sequence
+     ============================================ */
+  .step-sequence {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 20px 0;
+    padding-left: 32px;
+    border-left: 3px solid var(--slate-200);
+    position: relative;
+  }
+  .step-sequence::before {
+    content: '';
+    position: absolute;
+    left: -5px; top: 8px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--red-600);
+    border: 2px solid var(--cream);
+  }
+  .step-item {
+    padding: 12px 0 12px 20px;
+    position: relative;
+  }
+  .step-item::before {
+    content: attr(data-step);
+    position: absolute;
+    left: -52px;
+    top: 12px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--red-600);
+    color: var(--white);
+    font-size: .75rem;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-item h4 { margin-bottom: 2px; }
+  .step-item p { font-size: .875rem; margin-bottom: 4px; }
+
+  /* ============================================
+     Risk matrix
+     ============================================ */
+  .risk-table th:first-child,
+  .risk-table td:first-child { min-width: 140px; }
+  .risk-bar {
+    display: inline-block;
+    height: 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+  }
+
+  /* ============================================
+     Accordion (info details)
+     ============================================ */
+  details.info-details {
+    background: var(--white);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-md);
+    margin: 12px 0;
+    overflow: hidden;
+  }
+  details.info-details summary {
+    padding: 14px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: .9rem;
+    color: var(--slate-800);
+    transition: var(--transition);
+    list-style: none;
+    display: flex; align-items: center; gap: 8px;
+  }
+  details.info-details summary::-webkit-details-marker { display: none; }
+  details.info-details summary::before {
+    content: '▶';
+    font-size: .75rem;
+    color: var(--slate-400);
+    transition: var(--transition);
+  }
+  details.info-details[open] summary::before { transform: rotate(90deg); }
+  details.info-details summary:hover { background: var(--slate-50); }
+  details.info-details .details-body {
+    padding: 0 20px 16px;
+    font-size: .875rem;
+    color: var(--slate-600);
+  }
+  details.info-details .details-body p:last-child { margin-bottom: 0; }
+
+  /* ============================================
+     Quality gauge
+     ============================================ */
+  .gauge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .gauge-item {
+    background: var(--white);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    text-align: center;
+  }
+  .gauge-item .gauge-label {
+    font-size: .8rem;
+    color: var(--slate-500);
+    margin-bottom: 8px;
+  }
+  .gauge-item .gauge-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .gauge-item .gauge-desc {
+    font-size: .8rem;
+    color: var(--slate-600);
+  }
+
+  /* ============================================
+     Priority list
+     ============================================ */
+  .priority-list {
+    counter-reset: prio;
+    list-style: none;
+    margin: 20px 0;
+  }
+  .priority-list li {
+    counter-increment: prio;
+    padding: 16px 20px 16px 56px;
+    background: var(--white);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-md);
+    margin-bottom: 12px;
+    position: relative;
+    font-size: .9rem;
+  }
+  .priority-list li::before {
+    content: '#' counter(prio);
+    position: absolute;
+    left: 16px; top: 16px;
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: var(--red-100);
+    color: var(--red-600);
+    font-weight: 700;
+    font-size: .75rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .priority-list li strong { display: block; margin-bottom: 2px; }
+
+  /* ============================================
+     Footer
+     ============================================ */
+  .site-footer {
+    background: var(--slate-900);
+    color: var(--slate-400);
+    padding: 32px 0;
+    font-size: .8rem;
+    text-align: center;
+  }
+  .site-footer p { margin-bottom: 4px; }
+
+  /* ============================================
+     Responsive
+     ============================================ */
+  @media (max-width: 640px) {
+    section { padding: 48px 0; }
+    .hero { padding: 60px 0 48px; }
+    .hero .meta { flex-direction: column; gap: 8px; }
+    .card-grid { grid-template-columns: 1fr; }
+    .gauge-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     HERO
+     ============================================ -->
+<header class="hero">
+  <div class="container-wide">
+    <h1>TCM 辅助诊断 Agent<br>系统设计</h1>
+    <p class="subtitle">基于 Edge Mode LLM + RAG 架构的中医辨证论治辅助诊断系统设计</p>
+    <div class="meta">
+      <span>⏺ 项目状态：架构设计阶段</span>
+      <span>⏺ 模型策略：Edge Mode（本地部署小模型）</span>
+      <span>⏺ 核心方法：RAG + 结构化推理链</span>
+    </div>
+    <nav class="hero-nav">
+      <a href="#arch">架构总览</a>
+      <a href="#rag">RAG 数据层</a>
+      <a href="#agent">Agent 推理链</a>
+      <a href="#context">Context 编排</a>
+      <a href="#qa">质量保障</a>
+      <a href="#feasibility">可行性分析</a>
+      <a href="#recommend">关键建议</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============================================
+     SECTION: 架构总览
+     ============================================ -->
+<section id="arch">
+  <div class="container">
+    <span class="section-label">Architecture</span>
+    <h2>系统架构总览</h2>
+    <p>整体架构分为四层：Agent 编排层 → Context 组合层 → LLM 推理层 → 基础数据层。每层职责清晰，小模型只做"阅读理解"式的匹配工作，复杂推理由上层预先完成。</p>
+
+    <div class="arch-flow">
+      <div class="layer l1">
+        <div class="layer-label">Agent Layer &nbsp;·&nbsp; 智能编排层</div>
+        <div class="layer-desc">问诊管理 · RAG 编排 · 推理链 · 质量校验</div>
+        <div class="flow-row">
+          <span class="flow-item">Inquiry Mgr</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-item">RAG Orchestrator</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-item">Reason Chain</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-item">QA</span>
+        </div>
+      </div>
+      <div class="arrow-down"></div>
+      <div class="layer l2">
+        <div class="layer-label">Context Composition Layer &nbsp;·&nbsp; 上下文编排层</div>
+        <div class="layer-desc">将检索结果编排为 LLM 可消费的 Structured Context</div>
+      </div>
+      <div class="arrow-down"></div>
+      <div class="layer l3">
+        <div class="layer-label">LLM Inference (Edge) &nbsp;·&nbsp; 本地推理层</div>
+        <div class="layer-desc">Local Small Model (~7B) · 不微调 · 不记忆</div>
+      </div>
+      <div class="arrow-down"></div>
+      <div class="layer l4">
+        <div class="layer-label">Knowledge Base &nbsp;·&nbsp; 知识库层</div>
+        <div class="layer-desc">症状标准化引擎 · 证型 KB · 鉴别诊断矩阵 · 方药库</div>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top: 28px;">
+      <h4>核心设计理念</h4>
+      <p>质量排序：<strong>数据质量 &gt; Context 编排质量 &gt; Agent 推理链设计 &gt; 模型大小</strong></p>
+      <p>Context 中 <strong>避免让 LLM 做回忆/检索类工作</strong>——所有事实性信息已在 context 中。只让 LLM 做"匹配"和"组织"——这是小模型相对擅长的。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     SECTION: RAG 数据层
+     ============================================ -->
+<section id="rag">
+  <div class="container">
+    <span class="section-label">Data Layer</span>
+    <h2>RAG 数据层设计</h2>
+    <p>数据质量是整个系统的基础。我们分为三个核心子模块构建。</p>
+
+    <h3>① 症状标准化层</h3>
+    <p>病人主诉是自然语言，必须先映射到标准 TCM 术语。此环节<strong>完全不经过 LLM</strong>，由规则引擎 + embedding 检索完成。</p>
+
+    <div class="code-block">
+<span class="comment">// 输入：病人自然语言主诉</span>
+<span class="string">"这几天头晕，晚上睡不好，腰酸"</span>
+
+<span class="comment">// 症状标准化模块（规则匹配 + embedding 检索）</span>
+<span class="comment">// ↓</span>
+
+<span class="comment">// 输出：结构化标准症状</span>
+{
+  <span class="key">"primary_symptoms"</span>: [<span class="string">"头晕"</span>],
+  <span class="key">"secondary_symptoms"</span>: [<span class="string">"失眠"</span>, <span class="string">"腰膝酸软"</span>],
+  <span class="key">"tongue"</span>: <span class="string">"待采集"</span>,
+  <span class="key">"pulse"</span>: <span class="string">"待采集"</span>,
+  <span class="key">"status"</span>: <span class="string">"incomplete"</span>
+}
+    </div>
+
+    <h3>② 证型知识库结构</h3>
+    <p>这是 RAG 的核心数据集。每条记录包含以下字段：</p>
+
+    <div class="code-block">
+{
+  <span class="key">"pattern_id"</span>: <span class="string">"shen_yin_xu"</span>,
+  <span class="key">"pattern_name"</span>: <span class="string">"肾阴虚证"</span>,
+  <span class="key">"category"</span>: <span class="string">"脏腑辨证"</span>,
+  <span class="key">"core_symptoms"</span>: [<span class="string">"头晕"</span>, <span class="string">"耳鸣"</span>, <span class="string">"腰膝酸软"</span>],
+  <span class="key">"secondary_symptoms"</span>: [<span class="string">"失眠"</span>, <span class="string">"盗汗"</span>, <span class="string">"五心烦热"</span>, <span class="string">"口干咽燥"</span>],
+  <span class="key">"tongue"</span>: <span class="string">"舌红少苔"</span>,
+  <span class="key">"pulse"</span>: <span class="string">"脉细数"</span>,
+  <span class="key">"etiology"</span>: <span class="string">"久病伤肾 / 房劳过度 / 过服温燥"</span>,
+  <span class="key">"treatment_principle"</span>: <span class="string">"滋补肾阴"</span>,
+  <span class="key">"representative_formula"</span>: <span class="string">"六味地黄丸加减"</span>,
+  <span class="key">"key_differentiation"</span>: {
+    <span class="key">"vs_shen_yang_xu"</span>: <span class="string">"肾阴虚有热象（五心烦热、盗汗），肾阳虚有寒象（畏寒肢冷）"</span>,
+    <span class="key">"vs_fei_yin_xu"</span>: <span class="string">"肾阴虚以腰膝症状为主，肺阴虚以咳嗽咽干为主"</span>
+  }
+}
+    </div>
+
+    <h3>③ 鉴别诊断矩阵（关键差异化设计）</h3>
+    <p>这是让结果质量优于裸小模型的关键。为每个证型预计算鉴别路径：</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>证型</th>
+            <th>核心鉴别点</th>
+            <th>相似证型</th>
+            <th>区分关键</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>肾阴虚</td>
+            <td>五心烦热、盗汗、舌红少苔</td>
+            <td>肾阳虚</td>
+            <td>寒热之别：畏寒 vs 烦热</td>
+          </tr>
+          <tr>
+            <td>肾阳虚</td>
+            <td>畏寒肢冷、小便清长、舌淡胖</td>
+            <td>肾气虚</td>
+            <td>寒象有无：畏寒 vs 气短乏力</td>
+          </tr>
+          <tr>
+            <td>肝郁气滞</td>
+            <td>胁肋胀痛、情志抑郁、脉弦</td>
+            <td>肝火炽盛</td>
+            <td>火象有无：胀痛 vs 灼痛、面红目赤</td>
+          </tr>
+          <tr>
+            <td>心脾两虚</td>
+            <td>心悸失眠、食少便溏、面色萎黄</td>
+            <td>心肾不交</td>
+            <td>腰膝症状＋热象有无</td>
+          </tr>
+          <tr>
+            <td>痰湿阻肺</td>
+            <td>咳嗽痰多、胸闷、苔白腻</td>
+            <td>风寒束肺</td>
+            <td>表证有无：恶寒发热 vs 无表证</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>检索时<strong>同时返回相似证型及其区分要点</strong>，小模型不需要"自己推理出差异"，而是直接拿到对比表。</p>
+
+    <h3>数据层构建建议</h3>
+    <div class="card-grid card-grid-3">
+      <div class="card">
+        <div class="card-icon gold">01</div>
+        <h3>症状→证型映射矩阵</h3>
+        <p>每个标准症状指向哪些潜在证型及其权重。这是 embedding 检索的基础。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon gold">02</div>
+        <h3>证型鉴别诊断表</h3>
+        <p>证型之间的相似度矩阵与鉴别要点。确保鉴别诊断的完整性。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon gold">03</div>
+        <h3>证型→方药对照</h3>
+        <p>标准方剂、加减法、禁忌配伍。保证治疗建议的可靠性。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     SECTION: Agent 推理链
+     ============================================ -->
+<section id="agent">
+  <div class="container">
+    <span class="section-label">Reasoning Chain</span>
+    <h2>Agent 推理链设计</h2>
+    <p>小模型不能做复杂推理，所以我们将推理<strong>摊平为多个简单步骤</strong>，每步只做一种判断。</p>
+
+    <div class="step-sequence">
+      <div class="step-item" data-step="1">
+        <h4>症状收集与整理</h4>
+        <p><strong>输入：</strong>病人主诉 + 追问回答 &nbsp;→&nbsp; <strong>输出：</strong>结构化症状清单 {主症, 次症, 舌, 脉, 其他}</p>
+        <p><span class="tag green">不依赖 LLM</span> 完全由规则 + 追问模板完成。</p>
+      </div>
+    </div>
+
+    <div class="step-sequence" style="margin-top: 0;">
+      <div class="step-item" data-step="2">
+        <h4>候选证型粗筛 (Top-K Retrieval)</h4>
+        <p><strong>Query：</strong> [主症 embedding] + [次症 embedding] &nbsp;→&nbsp; <strong>检索：</strong> Top-5 候选证型 + 匹配度分数</p>
+        <p><span class="tag green">不依赖 LLM</span> 向量数据库语义检索，只看症状层面的相似度。</p>
+      </div>
+    </div>
+
+    <div class="step-sequence" style="margin-top: 0;">
+      <div class="step-item" data-step="3">
+        <h4>细筛与鉴别（LLM 首次参与）</h4>
+        <p>检索候选证型的鉴别诊断信息，构造对比表：</p>
+        <div class="table-wrap" style="margin: 12px 0;">
+          <table>
+            <thead>
+              <tr><th>症状</th><th>肾阴虚</th><th>肾阳虚</th><th>肾精不足</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>畏寒</td><td><span class="tag red">✗</span></td><td><span class="tag green">✓</span></td><td><span class="tag red">✗</span></td></tr>
+              <tr><td>五心烦热</td><td><span class="tag green">✓</span></td><td><span class="tag red">✗</span></td><td><span class="tag red">✗</span></td></tr>
+              <tr><td>腰膝酸软</td><td><span class="tag green">✓</span></td><td><span class="tag green">✓</span></td><td><span class="tag green">✓</span></td></tr>
+              <tr><td>发育迟缓</td><td><span class="tag red">✗</span></td><td><span class="tag red">✗</span></td><td><span class="tag green">✓</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><span class="tag red">LLM 参与</span> 让模型<strong>基于对比表选择最匹配的证型</strong>。任务从"复杂辨证推理"降级为"表格阅读理解"。</p>
+      </div>
+    </div>
+
+    <div class="step-sequence" style="margin-top: 0;">
+      <div class="step-item" data-step="4">
+        <h4>治疗建议生成</h4>
+        <p>检索选中证型的治则治法 + 标准方药，LLM 基于患者具体情况做个性化微调（加减化裁）。</p>
+        <p><span class="tag red">LLM 参与</span></p>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top: 28px;">
+      <h4>为什么这么做有效</h4>
+      <p>任务的认知复杂度从 <strong>Bloom 分类学的高阶（辨证推理、综合分析）</strong>降阶为 <strong>低阶（信息提取、模式匹配）</strong>。小模型（~7B）在模式匹配任务上的表现通常接近大模型。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     SECTION: Context 编排
+     ============================================ -->
+<section id="context">
+  <div class="container">
+    <span class="section-label">Prompt Engineering</span>
+    <h2>Context 编排设计</h2>
+    <p>这是 RAG 与 LLM 之间的桥梁。编排后的 Context 模板如下：</p>
+
+    <div class="code-block">
+【系统指令】
+你是一个中医诊断助手。请基于以下患者信息和诊断数据，
+进行辨证分析。
+
+【患者信息】
+主症：{头晕, 耳鸣}
+次症：{失眠, 腰膝酸软, 口干咽燥}
+舌象：舌红少苔
+脉象：脉细数
+
+【候选证型分析】
+| 证型     | 匹配度 | 核心符合 | 不符合     |
+|----------|--------|----------|------------|
+| 肾阴虚   | 92%    | 头晕, 腰膝酸软, 舌红少苔, 脉细数 | -          |
+| 肾阳虚   | 35%    | 腰膝酸软 | 无寒象     |
+| 肾精不足 | 50%    | 耳鸣, 腰膝酸软 | 无发育/生殖问题 |
+
+【鉴别诊断要点】
+- 肾阴虚 vs 肾阳虚: 肾阴虚有热象(五心烦热、盗汗),
+  肾阳虚有寒象(畏寒肢冷)
+- 肾阴虚 vs 肾精不足: 肾阴虚有虚热, 肾精不足无热象,
+  以发育/生殖功能减退为主
+
+【参考标准】肾阴虚证诊断标准:
+- 主症 ≥2 项: {头晕, 耳鸣, 腰膝酸软, 遗精}
+- 次症 ≥2 项: {失眠, 口干, 盗汗, 五心烦热}
+- 舌脉: 舌红少苔, 脉细数
+
+【任务】
+1. 分析患者症状符合哪个证型
+2. 给出辨证依据
+3. 提出治则治法
+4. 建议基础方药
+
+请严格按以下 JSON 格式输出：
+{{
+  "diagnosis": "...",
+  "evidence": "...",
+  "principle": "...",
+  "formula": "...",
+  "modifications": "...",
+  "confidence": 0-1
+}}
+    </div>
+
+    <div class="card-grid card-grid-2" style="margin-top: 24px;">
+      <div class="card">
+        <div class="card-icon red">①</div>
+        <h3>事实先行</h3>
+        <p>所有需要模型"回忆"的知识（证型标准、症状关联、方剂组成）全部放在 context 中。模型只需要做"匹配"。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon red">②</div>
+        <h3>结构化数据</h3>
+        <p>对比表、匹配度分数等结构化信息比段落文本更容易被小模型理解。表格格式优于叙述。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon red">③</div>
+        <h3>输出格式约束</h3>
+        <p>JSON 格式 + 固定字段 → 方便后续规则校验 → 不依赖模型自由生成能力。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon red">④</div>
+        <h3>不诱导幻觉</h3>
+        <p>避免"请详细分析"类开放指令。使用"请选择"而不是"请生成"。关闭模型"创造性回答"倾向。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     SECTION: 质量保障
+     ============================================ -->
+<section id="qa">
+  <div class="container">
+    <span class="section-label">Quality Assurance</span>
+    <h2>质量保障层设计</h2>
+    <p>诊断建议不能出错。我们使用规则-based 的 QA 校验来拦截明显错误——<strong>完全不依赖 LLM</strong>。</p>
+
+    <div class="card-grid card-grid-2">
+      <div class="card">
+        <div class="card-icon green">✓</div>
+        <h3>完整性校验</h3>
+        <p>验必填字段：证型、辨证依据、治则、方药是否齐全。缺一不可。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon green">✓</div>
+        <h3>配伍合理性校验</h3>
+        <p>证型与方药是否配伍合理？如肾阴虚不能用附子、肉桂等大热之品。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon green">✓</div>
+        <h3>舌脉一致性校验</h3>
+        <p>舌象、脉象与证型是否一致？如舌淡胖苔白滑 + 肾阴虚 → 矛盾检测。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon green">✓</div>
+        <h3>置信度评估</h3>
+        <p>基于信息完整度给诊断结果打分。缺舌象/脉象时自动降级为"疑似诊断"。</p>
+      </div>
+    </div>
+
+    <div class="highlight-box green" style="margin-top: 24px;">
+      <h4>最小完备信息集</h4>
+      <p><strong>必需：</strong>主症、舌质、舌苔、脉象</p>
+      <p><strong>强烈建议：</strong>次症（≥2）、二便、饮食、睡眠</p>
+      <p><strong>可选：</strong>月经（女性）、既往史、过敏史</p>
+      <p style="margin-top: 8px;">Agent 的第一轮交互应该是追问缺失信息。信息完整度直接决定诊断置信度。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     SECTION: 可行性分析
+     ============================================ -->
+<section id="feasibility">
+  <div class="container">
+    <span class="section-label">Analysis</span>
+    <h2>可行性分析</h2>
+
+    <h3>优势因素</h3>
+    <div class="card-grid card-grid-2">
+      <div class="card">
+        <div class="card-icon green">✓</div>
+        <h3>辨证的结构化特征</h3>
+        <p>证型是有限集合（约 200-400 个基础证型），本质是 pattern matching，非常适合 RAG + 规则引擎。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon green">✓</div>
+        <h3>推理链拆分</h3>
+        <p>复杂辨证拆解为 4 个简单步骤，每步只做小模型能做的事。认知负载大幅降低。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon green">✓</div>
+        <h3>Context 编排补足短板</h3>
+        <p>小模型最弱的知识记忆、复杂推理全部由 context 补足。模型只需做模式匹配。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon green">✓</div>
+        <h3>规则校验保障底线</h3>
+        <p>规则-based QA 层可拦截绝大多数明显错误，保证诊断建议的基本可靠性。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon green">✓</div>
+        <h3>主动追问机制</h3>
+        <p>Agent 可系统性地询问舌象、脉象等缺失信息，提高诊断完整度和置信度。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon green">✓</div>
+        <h3>可增量迭代</h3>
+        <p>数据层独立于模型层，新增证型、优化鉴别逻辑不依赖模型更新。迭代成本低。</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 40px;">风险与限制</h3>
+    <div class="table-wrap risk-table">
+      <table>
+        <thead>
+          <tr>
+            <th>风险</th>
+            <th>严重度</th>
+            <th>缓解措施</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>舌象/脉象难以文本化</td>
+            <td><span class="tag red">高</span></td>
+            <td>Agent 必须有标准化追问模板，系统采集舌质/舌苔/脉位/脉率/脉势</td>
+          </tr>
+          <tr>
+            <td>复合证型（兼夹证）</td>
+            <td><span class="tag gold">中高</span></td>
+            <td>数据层预计算常见复合证型组合（如肝肾阴虚、气阴两虚）</td>
+          </tr>
+          <tr>
+            <td>小模型细微差别判断力不足</td>
+            <td><span class="tag gold">中</span></td>
+            <td>鉴别诊断表直接给出"符合/不符合"标记，压缩为二元判断</td>
+          </tr>
+          <tr>
+            <td>地域/流派差异</td>
+            <td><span class="tag gold">中</span></td>
+            <td>输出标注流派来源，或保留"多种可能"选项供医生参考</td>
+          </tr>
+          <tr>
+            <td>罕见证型</td>
+            <td><span class="tag green">低</span></td>
+            <td>设置置信度阈值，低于阈值输出"建议进一步辨证"，避免误诊</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top: 40px;">预期质量评估</h3>
+    <div class="gauge-grid">
+      <div class="gauge-item">
+        <div class="gauge-label">单一典型证型<br>（症状完整）</div>
+        <div class="gauge-value" style="color: var(--green-700);">85-90%</div>
+        <div class="gauge-desc">高置信度诊断</div>
+      </div>
+      <div class="gauge-item">
+        <div class="gauge-label">常见复合证型<br>（症状完整）</div>
+        <div class="gauge-value" style="color: var(--gold-600);">70-80%</div>
+        <div class="gauge-desc">良好，需人工复核</div>
+      </div>
+      <div class="gauge-item">
+        <div class="gauge-label">信息不完整<br>（缺舌脉）</div>
+        <div class="gauge-value" style="color: var(--gold-600);">60-70%</div>
+        <div class="gauge-desc">降为"疑似诊断"</div>
+      </div>
+      <div class="gauge-item">
+        <div class="gauge-label">复杂兼夹<br>罕见证型</div>
+        <div class="gauge-value" style="color: var(--red-600);">50-60%</div>
+        <div class="gauge-desc">输出"保留诊断"</div>
+      </div>
+    </div>
+
+    <details class="info-details" style="margin-top: 28px;">
+      <summary>关于"Edge Mode + 小模型"的可行性</summary>
+      <div class="details-body">
+        <p>推荐模型（根据硬件条件选择）：</p>
+        <ul style="padding-left: 20px; margin: 8px 0;">
+          <li><strong>Qwen2.5-7B-Instruct</strong> — 中文场景首选，指令跟随能力强</li>
+          <li><strong>Yi-1.5-6B-Chat</strong> — 中文医学领域表现较好</li>
+          <li><strong>DeepSeek-V2-Lite-Chat</strong> — 推理效率高，适合低配硬件</li>
+          <li><strong>InternLM2-7B</strong> — 上海 AI Lab 出品，中文医学术语覆盖好</li>
+        </ul>
+        <p>如果硬件只能跑 <strong>3B 以下模型</strong>，建议退一步将定位改为"诊断建议助手"而非"诊断结论系统"，同时加强追问层和信息完整度校验，控制输出置信度。</p>
+        <p style="margin-top: 8px;"><strong>Embedding 模型选型建议：</strong>不要用通用 embedding。TCM 术语的语义空间很特殊。优先选择中文医学领域专用 embedding（如 PULSE、华佗系列的 embedding 模型），或使用领域数据自行微调。</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================
+     SECTION: 关键建议
+     ============================================ -->
+<section id="recommend">
+  <div class="container">
+    <span class="section-label">Recommendations</span>
+    <h2>关键建议</h2>
+    <p>基于上述设计，以下是实施时最需要关注的优先级：</p>
+
+    <ol class="priority-list">
+      <li>
+        <strong>数据质量是第一优先级</strong>
+        症状→证型映射矩阵的准确性和覆盖率直接决定系统上限。先花 70% 的精力把数据做扎实，再考虑模型选择和编排优化。
+      </li>
+      <li>
+        <strong>鉴别诊断矩阵不可省略</strong>
+        这是让小模型"超越自己"的关键。预计算相似证型的区分要点，通过 context 直接给到模型，比让模型自己推理可靠得多。
+      </li>
+      <li>
+        <strong>信息采集先于诊断</strong>
+        Agent 第一轮必须是追问：舌象如何？脉象如何？二便？月经？信息完整度是置信度的前提。设计"最小完备信息集"的强行入流程。
+      </li>
+      <li>
+        <strong>规则 QA 层不可或缺</strong>
+        所有校验逻辑用规则实现，不依赖 LLM。检查证型-方药一致性、舌脉-证型一致性、字段完整性。这是防止误诊的最后防线。
+      </li>
+      <li>
+        <strong>输出定位为"辅助参考"</strong>
+        系统定位应该是"中医师决策辅助工具"。输出中明确标注置信度、缺失信息提示，在 UI 上传达"仅供参考"的信号，不给模型超出实际能力范围的责任。
+      </li>
+    </ol>
+
+    <div class="highlight-box gold" style="margin-top: 28px;">
+      <h4>最终结论</h4>
+      <p>在条件约束下（Edge Mode、小模型、不可微调），<strong>可以有好的结果</strong>。质量前提是：<strong>数据层 &gt; 编排层 &gt; 模型层</strong>。</p>
+      <p>做好这三件事，可以达到接近可用的辅助诊断水平：</p>
+      <p>① 结构化的证型知识库（含鉴别诊断信息）<br>
+      ② 多步推理链 + 信息采集流程<br>
+      ③ 规则-based QA 校验层</p>
+      <p style="margin-top: 8px;">如果把数据层做到 90 分，编排做到 80 分，模型 60 分就够用。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================
+     FOOTER
+     ============================================ -->
+<footer class="site-footer">
+  <div class="container">
+    <p>TCM 辅助诊断 Agent · 系统设计文档</p>
+    <p>基于 Edge Mode LLM + RAG 架构 · 面向小规模部署的轻量级中医辨证辅助系统</p>
+  </div>
+</footer>
+
+</body>
+</html>
