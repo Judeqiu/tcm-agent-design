@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCM 辅助诊断 Agent — Presentation</title>
+<style>
+  /* ==============================================
+     RESET & BASE
+     ============================================== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #0a0a14;
+    color: #f1f1f1;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ==============================================
+     SLIDE CONTAINER
+     ============================================== */
+  .slides-wrapper {
+    width: 100vw; height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 10%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .7s ease, transform .7s ease;
+    transform: scale(.95);
+  }
+  .slide.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+  }
+
+  /* Slide backgrounds */
+  .slide-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+  }
+  .slide-bg::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: .12;
+  }
+
+  .slide:nth-child(1) .slide-bg { background: linear-gradient(135deg, #0a0a14 0%, #1a0a14 50%, #0a0a1e 100%); }
+  .slide:nth-child(1) .slide-bg::before {
+    background: #C41E3A;
+    top: -200px; right: -100px;
+  }
+
+  .slide:nth-child(2) .slide-bg { background: linear-gradient(135deg, #0a0a14 0%, #14100a 50%, #0a0a14 100%); }
+  .slide:nth-child(2) .slide-bg::before {
+    background: #B8860B;
+    bottom: -250px; left: -150px;
+  }
+
+  .slide:nth-child(3) .slide-bg { background: linear-gradient(135deg, #0a0a14 0%, #0a1410 50%, #0a0a1a 100%); }
+  .slide:nth-child(3) .slide-bg::before {
+    background: #5B8C5A;
+    top: -100px; left: 20%;
+  }
+
+  .slide:nth-child(4) .slide-bg { background: linear-gradient(180deg, #0a0a14 0%, #14101a 100%); }
+  .slide:nth-child(4) .slide-bg::before {
+    background: #C41E3A;
+    right: -200px; top: 30%;
+    width: 500px; height: 500px;
+  }
+
+  .slide:nth-child(5) .slide-bg { background: linear-gradient(135deg, #0a0a14 0%, #0a1418 50%, #0a0a14 100%); }
+  .slide:nth-child(5) .slide-bg::before {
+    background: #5B8C5A;
+    bottom: -200px; right: -100px;
+  }
+
+  .slide:nth-child(6) .slide-bg { background: linear-gradient(180deg, #0a0a14 0%, #1a0a0a 100%); }
+  .slide:nth-child(6) .slide-bg::before {
+    background: #B8860B;
+    left: -150px; bottom: -150px;
+  }
+
+  .slide:nth-child(7) .slide-bg { background: linear-gradient(135deg, #0a0a14 0%, #0a1414 50%, #0a0a14 100%); }
+  .slide:nth-child(7) .slide-bg::before {
+    background: #5B8C5A;
+    top: -150px; right: 10%;
+    width: 400px; height: 400px;
+  }
+
+  .slide:nth-child(8) .slide-bg { background: linear-gradient(135deg, #0a0a14 0%, #1a0a14 50%, #0a0a1e 100%); }
+  .slide:nth-child(8) .slide-bg::before {
+    background: #C41E3A;
+    top: -200px; left: 50%;
+    width: 700px; height: 700px;
+  }
+
+  /* ==============================================
+     SLIDE CONTENT ANIMATIONS
+     ============================================== */
+  .slide .anim {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .slide.active .anim {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .slide.active .anim.d1 { transition-delay: 0s; }
+  .slide.active .anim.d2 { transition-delay: .15s; }
+  .slide.active .anim.d3 { transition-delay: .3s; }
+  .slide.active .anim.d4 { transition-delay: .45s; }
+  .slide.active .anim.d5 { transition-delay: .6s; }
+  .slide.active .anim.d6 { transition-delay: .75s; }
+
+  /* Slide-in from left variant */
+  .slide .anim-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .slide.active .anim-left {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .slide.active .anim-left.d1 { transition-delay: .1s; }
+  .slide.active .anim-left.d2 { transition-delay: .3s; }
+  .slide.active .anim-left.d3 { transition-delay: .5s; }
+
+  /* Slide-out */
+  .slide.exiting {
+    opacity: 0;
+    transform: translateY(-20px) scale(.96);
+    transition: opacity .5s ease, transform .5s ease;
+  }
+
+  /* ==============================================
+     TYPOGRAPHY
+     ============================================== */
+  .slide-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 900px;
+    text-align: center;
+  }
+  .slide-content.left { text-align: left; }
+
+  .slide-label {
+    display: inline-block;
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .slide-label.red { background: rgba(196,30,58,.2); color: #f87171; }
+  .slide-label.green { background: rgba(91,140,90,.2); color: #86efac; }
+  .slide-label.gold { background: rgba(184,134,11,.2); color: #fcd34d; }
+
+  h1 {
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -.03em;
+    margin-bottom: 16px;
+  }
+  h1 .accent {
+    background: linear-gradient(135deg, #F0A030, #f87171);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  h1 .accent-green {
+    background: linear-gradient(135deg, #5B8C5A, #86efac);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  h2 {
+    font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -.02em;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    color: #94a3b8;
+    line-height: 1.6;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .left .subtitle { margin: 0; }
+
+  .body-text {
+    font-size: clamp(.95rem, 1.5vw, 1.15rem);
+    color: #cbd5e1;
+    line-height: 1.7;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .left .body-text { margin: 0; }
+
+  /* ==============================================
+     GRID LAYOUTS
+     ============================================== */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 24px;
+    text-align: left;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+    text-align: left;
+  }
+
+  .grid-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px;
+    padding: 28px;
+    backdrop-filter: blur(8px);
+    transition: border-color .3s ease, background .3s ease;
+  }
+  .grid-card:hover {
+    border-color: rgba(255,255,255,.15);
+    background: rgba(255,255,255,.06);
+  }
+
+  .grid-card .icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+  }
+  .grid-card .icon.red { background: rgba(196,30,58,.2); color: #f87171; }
+  .grid-card .icon.green { background: rgba(91,140,90,.2); color: #86efac; }
+  .grid-card .icon.gold { background: rgba(184,134,11,.2); color: #fcd34d; }
+  .grid-card .icon.slate { background: rgba(148,163,184,.15); color: #94a3b8; }
+
+  .grid-card h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .grid-card p {
+    font-size: .875rem;
+    color: #94a3b8;
+    line-height: 1.6;
+  }
+  .grid-card .em {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  /* ==============================================
+     FLOW DIAGRAM
+     ============================================== */
+  .flow-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 28px;
+  }
+  .flow-item {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 12px;
+    padding: 14px 22px;
+    font-size: .9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all .3s ease;
+  }
+  .flow-item:hover {
+    background: rgba(196,30,58,.2);
+    border-color: rgba(196,30,58,.4);
+  }
+  .flow-arrow {
+    font-size: 1.2rem;
+    color: rgba(255,255,255,.25);
+  }
+  .flow-label {
+    font-size: .72rem;
+    color: rgba(255,255,255,.35);
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  /* ==============================================
+     COMPARISON TABLE / LIST
+     ============================================== */
+  .check-list {
+    list-style: none;
+    margin-top: 16px;
+    text-align: left;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .left .check-list { margin-left: 0; margin-right: 0; }
+
+  .check-list li {
+    padding: 10px 0 10px 32px;
+    position: relative;
+    font-size: 1rem;
+    color: #cbd5e1;
+    border-bottom: 1px solid rgba(255,255,255,.05);
+  }
+  .check-list li:last-child { border-bottom: none; }
+  .check-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0; top: 10px;
+    color: #86efac;
+    font-weight: 700;
+  }
+
+  .icon-list {
+    list-style: none;
+    margin-top: 12px;
+  }
+  .icon-list li {
+    padding: 8px 0 8px 36px;
+    position: relative;
+    font-size: .95rem;
+    color: #cbd5e1;
+    line-height: 1.5;
+  }
+  .icon-list li .icon-em {
+    position: absolute;
+    left: 0; top: 8px;
+    font-size: 1.1rem;
+  }
+
+  /* ==============================================
+     GAUGE / METER
+     ============================================== */
+  .gauge-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 28px;
+  }
+  .gauge-item {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px;
+    padding: 24px 28px;
+    min-width: 160px;
+    text-align: center;
+  }
+  .gauge-item .pct {
+    font-size: 2.4rem;
+    font-weight: 800;
+  }
+  .gauge-item .pct-label {
+    font-size: .8rem;
+    color: #94a3b8;
+    margin-top: 4px;
+  }
+
+  /* ==============================================
+     NAVIGATION
+     ============================================== */
+  .nav-bar {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 100;
+    background: rgba(10,10,20,.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 40px;
+    padding: 8px 20px;
+  }
+
+  .nav-dots {
+    display: flex;
+    gap: 8px;
+  }
+  .nav-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.2);
+    cursor: pointer;
+    transition: all .3s ease;
+    border: none;
+    padding: 0;
+  }
+  .nav-dot:hover { background: rgba(255,255,255,.4); }
+  .nav-dot.active {
+    background: #C41E3A;
+    width: 28px;
+    border-radius: 4px;
+  }
+
+  .nav-btn {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.1);
+    color: #f1f1f1;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .3s ease;
+  }
+  .nav-btn:hover {
+    background: rgba(196,30,58,.3);
+    border-color: rgba(196,30,58,.4);
+  }
+  .nav-btn:disabled {
+    opacity: .2;
+    cursor: default;
+  }
+  .nav-btn:disabled:hover {
+    background: rgba(255,255,255,.06);
+    border-color: rgba(255,255,255,.1);
+  }
+
+  .nav-counter {
+    font-size: .75rem;
+    color: rgba(255,255,255,.35);
+    font-weight: 600;
+    letter-spacing: .05em;
+    min-width: 36px;
+    text-align: center;
+  }
+
+  /* ==============================================
+     AUTOPLAY INDICATOR
+     ============================================== */
+  .autoplay-ring {
+    position: fixed;
+    top: 24px; right: 24px;
+    z-index: 100;
+    color: rgba(255,255,255,.2);
+    font-size: .75rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .autoplay-ring .ring {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.1);
+    position: relative;
+  }
+  .autoplay-ring .ring-fill {
+    position: absolute;
+    inset: 2px;
+    border-radius: 50%;
+    background: rgba(196,30,58,.6);
+    transform-origin: center;
+    transition: transform .1s linear;
+  }
+
+  /* ==============================================
+     RESPONSIVE
+     ============================================== */
+  @media (max-width: 700px) {
+    .slide { padding: 40px 6%; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 16px; }
+    .gauge-item { min-width: 130px; padding: 18px 16px; }
+    .gauge-item .pct { font-size: 1.8rem; }
+    .nav-bar { gap: 10px; padding: 6px 14px; }
+    .flow-item { padding: 10px 14px; font-size: .8rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="slides-wrapper" id="slidesWrapper">
+
+  <!-- ==========================================
+     SLIDE 1 - TITLE
+     ========================================== -->
+  <div class="slide active" data-index="0">
+    <div class="slide-bg"></div>
+    <div class="slide-content">
+      <span class="slide-label red anim d1">TCM · AI 辅助诊断</span>
+      <h1 class="anim d2">
+        <span class="accent">中医辨证</span> 智能助手
+      </h1>
+      <p class="subtitle anim d3">
+        基于本地部署 AI + 结构化知识库的中医辅助诊断系统<br>
+        让每一位中医师都拥有一个可靠的"数字副手"
+      </p>
+      <div class="flow-row anim d4" style="opacity:.4; font-size:.8rem; gap:4px;">
+        <span>轻量 · 离线 · 可落地</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+     SLIDE 2 - THE PROBLEM
+     ========================================== -->
+  <div class="slide" data-index="1">
+    <div class="slide-bg"></div>
+    <div class="slide-content left">
+      <span class="slide-label gold anim-left d1">Why</span>
+      <h2 class="anim-left d2">中医诊断的挑战</h2>
+      <p class="body-text anim-left d3" style="margin-bottom:20px;">
+        辨证论治是中医的核心，但现实中有三个突出的痛点：
+      </p>
+      <ul class="check-list anim d1">
+        <li><strong>经验断层</strong> —— 青年医师缺乏临床积累，辨证准确性不稳定</li>
+        <li><strong>信息不全</strong> —— 问诊容易遗漏关键信息（舌象、脉象等），影响诊断质量</li>
+        <li><strong>AI 不可靠</strong> —— 通用大模型"幻觉"严重，直接给出中药方剂存在安全隐患</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ==========================================
+     SLIDE 3 - THE IDEA
+     ========================================== -->
+  <div class="slide" data-index="2">
+    <div class="slide-bg"></div>
+    <div class="slide-content">
+      <span class="slide-label green anim d1">What</span>
+      <h2 class="anim d2">我们的方案：<span class="accent-green">AI + 知识库</span></h2>
+      <p class="subtitle anim d3" style="margin-bottom:8px;">
+        不依赖大模型"死记硬背"，而是让 AI 学会"查资料"
+      </p>
+
+      <div class="grid-2" style="max-width: 760px; margin: 16px auto 0;">
+        <div class="grid-card anim-left d1">
+          <div class="icon green">📚</div>
+          <h3>结构化中医知识库</h3>
+          <p>把辨证知识整理成"症状→证型→方药"的对照表，AI 遇到患者时先查表、再判断。</p>
+        </div>
+        <div class="grid-card anim-left d2">
+          <div class="icon red">🧠</div>
+          <h3>本地小模型</h3>
+          <p>7B 参数的小模型部署在本地，无需联网、数据不出院、<strong>零成本 API 调用</strong>。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+     SLIDE 4 - HOW IT WORKS
+     ========================================== -->
+  <div class="slide" data-index="3">
+    <div class="slide-bg"></div>
+    <div class="slide-content">
+      <span class="slide-label red anim d1">How</span>
+      <h2 class="anim d2">工作流程</h2>
+      <p class="body-text anim d3">四步走，每一步都让 AI 做它最擅长的事</p>
+
+      <div class="flow-row anim d4" style="margin-top:32px;">
+        <span class="flow-item">🗣 患者主诉</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-item">📋 症状<br><small style="opacity:.5;">标准化</small></span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-item">🔍 知识库<br><small style="opacity:.5;">匹配</small></span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-item">✅ 诊断<br><small style="opacity:.5;">建议</small></span>
+      </div>
+
+      <div class="grid-3" style="max-width: 800px; margin: 24px auto 0;">
+        <div class="grid-card anim d5">
+          <div class="icon slate">1</div>
+          <p style="font-size:.8rem;">系统先<strong>追问</strong>收集完整症状、舌象、脉象</p>
+        </div>
+        <div class="grid-card anim d5" style="transition-delay: .15s;">
+          <div class="icon slate">2</div>
+          <p style="font-size:.8rem;">从<strong>结构化知识库</strong>中匹配最可能的证型</p>
+        </div>
+        <div class="grid-card anim d5" style="transition-delay: .3s;">
+          <div class="icon slate">3</div>
+          <p style="font-size:.8rem;">AI 基于对比表<strong>选择最符合</strong>的证型与建议</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+     SLIDE 5 - WHY THIS APPROACH
+     ========================================== -->
+  <div class="slide" data-index="4">
+    <div class="slide-bg"></div>
+    <div class="slide-content left">
+      <span class="slide-label green anim-left d1">Why This</span>
+      <h2 class="anim-left d2">为什么这样设计</h2>
+
+      <div class="grid-2" style="max-width:780px;">
+        <div class="grid-card anim-left d1">
+          <div class="icon green">🔒</div>
+          <h3>Edge Mode · 本地部署</h3>
+          <ul class="icon-list">
+            <li><span class="icon-em">🔐</span> 患者数据不出医院，<strong>隐私安全</strong></li>
+            <li><span class="icon-em">📡</span> 无需联网，<strong>离线可用</strong></li>
+            <li><span class="icon-em">💰</span> 没有 API 调用费用，<strong>零运营成本</strong></li>
+          </ul>
+        </div>
+        <div class="grid-card anim-left d2">
+          <div class="icon gold">📖</div>
+          <h3>RAG · 知识库增强</h3>
+          <ul class="icon-list">
+            <li><span class="icon-em">🎯</span> AI 不"瞎编"——所有回答<strong>有据可查</strong></li>
+            <li><span class="icon-em">🔄</span> 知识库可以随时更新，<strong>无需重新训练模型</strong></li>
+            <li><span class="icon-em">⚖️</span> 小模型 + 好数据 = 大模型效果</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+     SLIDE 6 - KEY ADVANTAGES
+     ========================================== -->
+  <div class="slide" data-index="5">
+    <div class="slide-bg"></div>
+    <div class="slide-content">
+      <span class="slide-label gold anim d1">Strengths</span>
+      <h2 class="anim d2">四大核心优势</h2>
+
+      <div class="grid-2" style="max-width: 780px;">
+        <div class="grid-card anim-left d1">
+          <div class="icon red">📊</div>
+          <h3>结构化的辨证知识</h3>
+          <p>证型是有限集合（约 200-400 种），本质是"模式匹配"。结构化后 AI 判断准确率大幅提升。</p>
+        </div>
+        <div class="grid-card anim-left d2">
+          <div class="icon green">🧩</div>
+          <h3>步骤化推理</h3>
+          <p>复杂辨证拆解为 4 个简单步骤。每步 AI 只做一件事：采集 → 检索 → 对比 → 建议。</p>
+        </div>
+        <div class="grid-card anim-left d1">
+          <div class="icon gold">🛡️</div>
+          <h3>规则校验兜底</h3>
+          <p>AI 输出后，系统自动检查：证型与方药是否匹配？舌象与脉象是否矛盾？错误自动拦截。</p>
+        </div>
+        <div class="grid-card anim-left d2">
+          <div class="icon slate">⏱️</div>
+          <h3>持续迭代</h3>
+          <p>新增证型、优化鉴别逻辑只需更新知识库，完全不依赖模型升级。迭代周期从天缩短到小时。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+     SLIDE 7 - EXPECTED QUALITY
+     ========================================== -->
+  <div class="slide" data-index="6">
+    <div class="slide-bg"></div>
+    <div class="slide-content">
+      <span class="slide-label green anim d1">Quality</span>
+      <h2 class="anim d2">预期效果</h2>
+      <p class="body-text anim d3">数据质量决定系统上限——知识库越完善，诊断越准确</p>
+
+      <div class="gauge-row anim d4">
+        <div class="gauge-item">
+          <div class="pct" style="color:#86efac;">85-90%</div>
+          <div class="pct-label">典型单一证型<br><span style="opacity:.5;font-size:.75rem;">症状完整</span></div>
+        </div>
+        <div class="gauge-item">
+          <div class="pct" style="color:#fcd34d;">70-80%</div>
+          <div class="pct-label">常见复合证型<br><span style="opacity:.5;font-size:.75rem;">症状完整</span></div>
+        </div>
+        <div class="gauge-item">
+          <div class="pct" style="color:#fcd34d;">60-70%</div>
+          <div class="pct-label">信息不完整<br><span style="opacity:.5;font-size:.75rem;">缺舌脉</span></div>
+        </div>
+        <div class="gauge-item">
+          <div class="pct" style="color:#f87171;">50-60%</div>
+          <div class="pct-label">复杂/罕见证型<br><span style="opacity:.5;font-size:.75rem;">保留诊断</span></div>
+        </div>
+      </div>
+
+      <p class="body-text anim d5" style="font-size:.85rem;margin-top:20px;color:#64748b;">
+        ⚠️ 系统定位为"辅助参考"，最终诊断权始终在医师手中
+      </p>
+    </div>
+  </div>
+
+  <!-- ==========================================
+     SLIDE 8 - SUMMARY
+     ========================================== -->
+  <div class="slide" data-index="7">
+    <div class="slide-bg"></div>
+    <div class="slide-content">
+      <span class="slide-label red anim d1">Vision</span>
+      <h2 class="anim d2" style="margin-bottom:20px;">
+        让每一位中医师<br>
+        都拥有一个<span class="accent">可靠的数字副手</span>
+      </h2>
+
+      <div class="grid-3" style="max-width: 780px; margin: 0 auto;">
+        <div class="grid-card anim-left d1">
+          <div class="icon green">1</div>
+          <h3>建知识库</h3>
+          <p>梳理结构化辨证图谱，打好数据基础</p>
+        </div>
+        <div class="grid-card anim-left d2">
+          <div class="icon gold">2</div>
+          <h3>搭推理链</h3>
+          <p>设计采集→检索→对比→建议的多步流程</p>
+        </div>
+        <div class="grid-card anim-left d3">
+          <div class="icon red">3</div>
+          <h3>加校验层</h3>
+          <p>规则拦截明显错误，守住安全底线</p>
+        </div>
+      </div>
+
+      <p class="body-text anim d4" style="margin-top: 36px; color: #64748b; font-size: .9rem;">
+        数据层 90 分 + 编排层 80 分 = 模型只要有 60 分，就能达到接近可用的辅助诊断水平
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==========================================
+     NAVIGATION
+     ========================================== -->
+<div class="nav-bar" id="navBar">
+  <button class="nav-btn" id="prevBtn" onclick="prevSlide()" disabled>‹</button>
+  <div class="nav-dots" id="navDots"></div>
+  <span class="nav-counter" id="navCounter">1 / 8</span>
+  <button class="nav-btn" id="nextBtn" onclick="nextSlide()">›</button>
+</div>
+
+<div class="autoplay-ring" id="autoplayRing">
+  <span id="autoplayStatus" style="cursor:pointer;" onclick="toggleAutoplay()">⏸ 暂停</span>
+  <div class="ring"><div class="ring-fill" id="ringFill" style="transform:scaleX(1);"></div></div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.getElementById('navDots');
+  const counter = document.getElementById('navCounter');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const total = slides.length;
+  let current = 0;
+  let autoplay = true;
+  let autoplayTimer = null;
+  const AUTOPLAY_DELAY = 5500;
+  let progress = 0;
+  let animFrame = null;
+  let transitioning = false;
+
+  /* Build dots */
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('button');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => goTo(i);
+    dots.appendChild(dot);
+  }
+
+  function goTo(index) {
+    if (transitioning || index === current) return;
+    transitioning = true;
+
+    const prev = current;
+    current = index;
+
+    slides[prev].classList.remove('active');
+    slides[prev].classList.add('exiting');
+    setTimeout(() => slides[prev].classList.remove('exiting'), 500);
+
+    slides[current].classList.add('active');
+
+    updateNav();
+    resetProgress();
+
+    setTimeout(() => { transitioning = false; }, 700);
+  }
+
+  function nextSlide() { if (current < total - 1) goTo(current + 1); }
+  function prevSlide() { if (current > 0) goTo(current - 1); }
+
+  function updateNav() {
+    document.querySelectorAll('.nav-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+    counter.textContent = (current + 1) + ' / ' + total;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+  }
+
+  /* Keyboard navigation */
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault();
+      if (current < total - 1) nextSlide();
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (current > 0) prevSlide();
+    }
+  });
+
+  /* Click to navigate */
+  document.getElementById('slidesWrapper').addEventListener('click', (e) => {
+    if (e.target.closest('.nav-bar') || e.target.closest('.autoplay-ring')) return;
+    if (e.clientX > window.innerWidth / 2) {
+      if (current < total - 1) nextSlide();
+    } else {
+      if (current > 0) prevSlide();
+    }
+  });
+
+  /* Touch support */
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+  document.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 60) {
+      if (diff > 0 && current < total - 1) nextSlide();
+      else if (diff < 0 && current > 0) prevSlide();
+    }
+  });
+
+  /* Autoplay */
+  function tickProgress() {
+    progress += 16;
+    const fill = Math.min(progress / AUTOPLAY_DELAY, 1);
+    document.getElementById('ringFill').style.transform = 'scaleY(' + fill + ')';
+
+    if (progress >= AUTOPLAY_DELAY) {
+      progress = 0;
+      if (current < total - 1) {
+        nextSlide();
+      } else {
+        goTo(0);
+      }
+    }
+
+    if (autoplay) animFrame = requestAnimationFrame(tickProgress);
+  }
+
+  function resetProgress() {
+    progress = 0;
+  }
+
+  function startAutoplay() {
+    autoplay = true;
+    document.getElementById('autoplayStatus').textContent = '⏸ 暂停';
+    resetProgress();
+    if (animFrame) cancelAnimationFrame(animFrame);
+    animFrame = requestAnimationFrame(tickProgress);
+  }
+
+  function stopAutoplay() {
+    autoplay = false;
+    document.getElementById('autoplayStatus').textContent = '▶ 播放';
+    if (animFrame) cancelAnimationFrame(animFrame);
+  }
+
+  function toggleAutoplay() {
+    if (autoplay) stopAutoplay();
+    else startAutoplay();
+  }
+
+  /* Stop autoplay on manual interaction */
+  function handleManual() { if (autoplay) stopAutoplay(); }
+  prevBtn.addEventListener('click', handleManual);
+  nextBtn.addEventListener('click', handleManual);
+  document.querySelectorAll('.nav-dot').forEach(d => d.addEventListener('click', handleManual));
+
+  /* Start */
+  startAutoplay();
+</script>
+
+</body>
+</html>
