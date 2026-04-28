@@ -539,6 +539,40 @@
     .card-grid { grid-template-columns: 1fr; }
     .gauge-grid { grid-template-columns: 1fr 1fr; }
   }
+
+  /* ============================================
+     Language Toggle
+     ============================================ */
+  .lang-toggle {
+    position: fixed;
+    top: 20px;
+    right: 24px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,.95);
+    border: 1px solid var(--slate-200);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--slate-700);
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+    user-select: none;
+  }
+  .lang-toggle:hover { box-shadow: var(--shadow-lg); }
+  .lang-toggle .lang-opt {
+    padding: 2px 8px;
+    border-radius: 12px;
+    transition: var(--transition);
+  }
+  .lang-toggle .lang-opt.active {
+    background: var(--red-600);
+    color: white;
+  }
 </style>
 </head>
 <body>
@@ -548,21 +582,26 @@
      ============================================ -->
 <header class="hero">
   <div class="container-wide">
-    <h1>TCM 辅助诊断 Agent<br>系统设计</h1>
-    <p class="subtitle">基于 Edge Mode LLM + RAG 架构的中医辨证论治辅助诊断系统设计</p>
+    <div class="lang-toggle" onclick="toggleLang()">
+      <span class="lang-opt active" data-lang="zh">中</span>
+      <span style="color:var(--slate-300);font-size:.7rem;">/</span>
+      <span class="lang-opt" data-lang="en">EN</span>
+    </div>
+    <h1 data-i18n-html="hero.title">TCM 辅助诊断 Agent<br>系统设计</h1>
+    <p class="subtitle" data-i18n="hero.subtitle">基于 Edge Mode LLM + RAG 架构的中医辨证论治辅助诊断系统设计</p>
     <div class="meta">
-      <span>⏺ 项目状态：架构设计阶段</span>
-      <span>⏺ 模型策略：Edge Mode（本地部署小模型）</span>
-      <span>⏺ 核心方法：RAG + 结构化推理链</span>
+      <span data-i18n="hero.meta.status">⏺ 项目状态：架构设计阶段</span>
+      <span data-i18n="hero.meta.model">⏺ 模型策略：Edge Mode（本地部署小模型）</span>
+      <span data-i18n="hero.meta.method">⏺ 核心方法：RAG + 结构化推理链</span>
     </div>
     <nav class="hero-nav">
-      <a href="#arch">架构总览</a>
-      <a href="#rag">RAG 数据层</a>
-      <a href="#agent">Agent 推理链</a>
-      <a href="#context">Context 编排</a>
-      <a href="#qa">质量保障</a>
-      <a href="#feasibility">可行性分析</a>
-      <a href="#recommend">关键建议</a>
+      <a href="#arch" data-i18n="hero.nav.arch">架构总览</a>
+      <a href="#rag" data-i18n="hero.nav.rag">RAG 数据层</a>
+      <a href="#agent" data-i18n="hero.nav.agent">Agent 推理链</a>
+      <a href="#context" data-i18n="hero.nav.context">Context 编排</a>
+      <a href="#qa" data-i18n="hero.nav.qa">质量保障</a>
+      <a href="#feasibility" data-i18n="hero.nav.feasibility">可行性分析</a>
+      <a href="#recommend" data-i18n="hero.nav.recommend">关键建议</a>
     </nav>
   </div>
 </header>
@@ -572,14 +611,14 @@
      ============================================ -->
 <section id="arch">
   <div class="container">
-    <span class="section-label">Architecture</span>
-    <h2>系统架构总览</h2>
-    <p>整体架构分为四层：Agent 编排层 → Context 组合层 → LLM 推理层 → 基础数据层。每层职责清晰，小模型只做"阅读理解"式的匹配工作，复杂推理由上层预先完成。</p>
+    <span class="section-label" data-i18n="arch.label">Architecture</span>
+    <h2 data-i18n="arch.title">系统架构总览</h2>
+    <p data-i18n="arch.body">整体架构分为四层：Agent 编排层 → Context 组合层 → LLM 推理层 → 基础数据层。每层职责清晰，小模型只做"阅读理解"式的匹配工作，复杂推理由上层预先完成。</p>
 
     <div class="arch-flow">
       <div class="layer l1">
-        <div class="layer-label">Agent Layer &nbsp;·&nbsp; 智能编排层</div>
-        <div class="layer-desc">问诊管理 · RAG 编排 · 推理链 · 质量校验</div>
+        <div class="layer-label" data-i18n="arch.layer.agent">Agent Layer &nbsp;·&nbsp; 智能编排层</div>
+        <div class="layer-desc" data-i18n="arch.layer.agentDesc">问诊管理 · RAG 编排 · 推理链 · 质量校验</div>
         <div class="flow-row">
           <span class="flow-item">Inquiry Mgr</span>
           <span class="flow-arrow">→</span>
@@ -592,25 +631,25 @@
       </div>
       <div class="arrow-down"></div>
       <div class="layer l2">
-        <div class="layer-label">Context Composition Layer &nbsp;·&nbsp; 上下文编排层</div>
-        <div class="layer-desc">将检索结果编排为 LLM 可消费的 Structured Context</div>
+        <div class="layer-label" data-i18n="arch.layer.context">Context Composition Layer &nbsp;·&nbsp; 上下文编排层</div>
+        <div class="layer-desc" data-i18n="arch.layer.contextDesc">将检索结果编排为 LLM 可消费的 Structured Context</div>
       </div>
       <div class="arrow-down"></div>
       <div class="layer l3">
         <div class="layer-label">LLM Inference (Edge) &nbsp;·&nbsp; 本地推理层</div>
-        <div class="layer-desc">Local Small Model (~7B) · 不微调 · 不记忆</div>
+        <div class="layer-desc" data-i18n="arch.layer.llmDesc">Local Small Model (~7B) · 不微调 · 不记忆</div>
       </div>
       <div class="arrow-down"></div>
       <div class="layer l4">
         <div class="layer-label">Knowledge Base &nbsp;·&nbsp; 知识库层</div>
-        <div class="layer-desc">症状标准化引擎 · 证型 KB · 鉴别诊断矩阵 · 方药库</div>
+        <div class="layer-desc" data-i18n="arch.layer.kbDesc">症状标准化引擎 · 证型 KB · 鉴别诊断矩阵 · 方药库</div>
       </div>
     </div>
 
     <div class="highlight-box" style="margin-top: 28px;">
-      <h4>核心设计理念</h4>
-      <p>质量排序：<strong>数据质量 &gt; Context 编排质量 &gt; Agent 推理链设计 &gt; 模型大小</strong></p>
-      <p>Context 中 <strong>避免让 LLM 做回忆/检索类工作</strong>——所有事实性信息已在 context 中。只让 LLM 做"匹配"和"组织"——这是小模型相对擅长的。</p>
+      <h4 data-i18n="arch.highlightTitle">核心设计理念</h4>
+      <p data-i18n-html="arch.highlightP1">质量排序：<strong>数据质量 &gt; Context 编排质量 &gt; Agent 推理链设计 &gt; 模型大小</strong></p>
+      <p data-i18n-html="arch.highlightP2">Context 中 <strong>避免让 LLM 做回忆/检索类工作</strong>——所有事实性信息已在 context 中。只让 LLM 做"匹配"和"组织"——这是小模型相对擅长的。</p>
     </div>
   </div>
 </section>
@@ -620,12 +659,12 @@
      ============================================ -->
 <section id="rag">
   <div class="container">
-    <span class="section-label">Data Layer</span>
-    <h2>RAG 数据层设计</h2>
-    <p>数据质量是整个系统的基础。我们分为三个核心子模块构建。</p>
+    <span class="section-label" data-i18n="rag.label">Data Layer</span>
+    <h2 data-i18n="rag.title">RAG 数据层设计</h2>
+    <p data-i18n="rag.body">数据质量是整个系统的基础。我们分为三个核心子模块构建。</p>
 
-    <h3>① 症状标准化层</h3>
-    <p>病人主诉是自然语言，必须先映射到标准 TCM 术语。此环节<strong>完全不经过 LLM</strong>，由规则引擎 + embedding 检索完成。</p>
+    <h3 data-i18n="rag.sub1">① 症状标准化层</h3>
+    <p data-i18n="rag.sub1Body">病人主诉是自然语言，必须先映射到标准 TCM 术语。此环节<strong>完全不经过 LLM</strong>，由规则引擎 + embedding 检索完成。</p>
 
     <div class="code-block">
 <span class="comment">// 输入：病人自然语言主诉</span>
@@ -644,8 +683,8 @@
 }
     </div>
 
-    <h3>② 证型知识库结构</h3>
-    <p>这是 RAG 的核心数据集。每条记录包含以下字段：</p>
+    <h3 data-i18n="rag.sub2">② 证型知识库结构</h3>
+    <p data-i18n="rag.sub2Body">这是 RAG 的核心数据集。每条记录包含以下字段：</p>
 
     <div class="code-block">
 {
@@ -666,17 +705,17 @@
 }
     </div>
 
-    <h3>③ 鉴别诊断矩阵（关键差异化设计）</h3>
-    <p>这是让结果质量优于裸小模型的关键。为每个证型预计算鉴别路径：</p>
+    <h3 data-i18n="rag.sub3">③ 鉴别诊断矩阵（关键差异化设计）</h3>
+    <p data-i18n="rag.sub3Body">这是让结果质量优于裸小模型的关键。为每个证型预计算鉴别路径：</p>
 
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th>证型</th>
-            <th>核心鉴别点</th>
-            <th>相似证型</th>
-            <th>区分关键</th>
+            <th data-i18n="rag.table.pattern">证型</th>
+            <th data-i18n="rag.table.keyPoint">核心鉴别点</th>
+            <th data-i18n="rag.table.similar">相似证型</th>
+            <th data-i18n="rag.table.distinction">区分关键</th>
           </tr>
         </thead>
         <tbody>
@@ -714,24 +753,24 @@
       </table>
     </div>
 
-    <p>检索时<strong>同时返回相似证型及其区分要点</strong>，小模型不需要"自己推理出差异"，而是直接拿到对比表。</p>
+    <p data-i18n-html="rag.retrievalNote">检索时<strong>同时返回相似证型及其区分要点</strong>，小模型不需要"自己推理出差异"，而是直接拿到对比表。</p>
 
-    <h3>数据层构建建议</h3>
+    <h3 data-i18n="rag.buildTitle">数据层构建建议</h3>
     <div class="card-grid card-grid-3">
       <div class="card">
         <div class="card-icon gold">01</div>
-        <h3>症状→证型映射矩阵</h3>
-        <p>每个标准症状指向哪些潜在证型及其权重。这是 embedding 检索的基础。</p>
+        <h3 data-i18n="rag.card1Title">症状→证型映射矩阵</h3>
+        <p data-i18n="rag.card1Body">每个标准症状指向哪些潜在证型及其权重。这是 embedding 检索的基础。</p>
       </div>
       <div class="card">
         <div class="card-icon gold">02</div>
-        <h3>证型鉴别诊断表</h3>
-        <p>证型之间的相似度矩阵与鉴别要点。确保鉴别诊断的完整性。</p>
+        <h3 data-i18n="rag.card2Title">证型鉴别诊断表</h3>
+        <p data-i18n="rag.card2Body">证型之间的相似度矩阵与鉴别要点。确保鉴别诊断的完整性。</p>
       </div>
       <div class="card">
         <div class="card-icon gold">03</div>
-        <h3>证型→方药对照</h3>
-        <p>标准方剂、加减法、禁忌配伍。保证治疗建议的可靠性。</p>
+        <h3 data-i18n="rag.card3Title">证型→方药对照</h3>
+        <p data-i18n="rag.card3Body">标准方剂、加减法、禁忌配伍。保证治疗建议的可靠性。</p>
       </div>
     </div>
   </div>
@@ -742,34 +781,34 @@
      ============================================ -->
 <section id="agent">
   <div class="container">
-    <span class="section-label">Reasoning Chain</span>
-    <h2>Agent 推理链设计</h2>
-    <p>小模型不能做复杂推理，所以我们将推理<strong>摊平为多个简单步骤</strong>，每步只做一种判断。</p>
+    <span class="section-label" data-i18n="agent.label">Reasoning Chain</span>
+    <h2 data-i18n="agent.title">Agent 推理链设计</h2>
+    <p data-i18n-html="agent.body">小模型不能做复杂推理，所以我们将推理<strong>摊平为多个简单步骤</strong>，每步只做一种判断。</p>
 
     <div class="step-sequence">
       <div class="step-item" data-step="1">
-        <h4>症状收集与整理</h4>
-        <p><strong>输入：</strong>病人主诉 + 追问回答 &nbsp;→&nbsp; <strong>输出：</strong>结构化症状清单 {主症, 次症, 舌, 脉, 其他}</p>
-        <p><span class="tag green">不依赖 LLM</span> 完全由规则 + 追问模板完成。</p>
+        <h4 data-i18n="agent.step1Title">症状收集与整理</h4>
+        <p data-i18n-html="agent.step1Body"><strong>输入：</strong>病人主诉 + 追问回答 &nbsp;→&nbsp; <strong>输出：</strong>结构化症状清单 {主症, 次症, 舌, 脉, 其他}</p>
+        <p data-i18n-html="agent.step1Tag"><span class="tag green">不依赖 LLM</span> 完全由规则 + 追问模板完成。</p>
       </div>
     </div>
 
     <div class="step-sequence" style="margin-top: 0;">
       <div class="step-item" data-step="2">
-        <h4>候选证型粗筛 (Top-K Retrieval)</h4>
-        <p><strong>Query：</strong> [主症 embedding] + [次症 embedding] &nbsp;→&nbsp; <strong>检索：</strong> Top-5 候选证型 + 匹配度分数</p>
-        <p><span class="tag green">不依赖 LLM</span> 向量数据库语义检索，只看症状层面的相似度。</p>
+        <h4 data-i18n="agent.step2Title">候选证型粗筛 (Top-K Retrieval)</h4>
+        <p data-i18n-html="agent.step2Body"><strong>Query：</strong> [主症 embedding] + [次症 embedding] &nbsp;→&nbsp; <strong>检索：</strong> Top-5 候选证型 + 匹配度分数</p>
+        <p data-i18n-html="agent.step2Tag"><span class="tag green">不依赖 LLM</span> 向量数据库语义检索，只看症状层面的相似度。</p>
       </div>
     </div>
 
     <div class="step-sequence" style="margin-top: 0;">
       <div class="step-item" data-step="3">
-        <h4>细筛与鉴别（LLM 首次参与）</h4>
-        <p>检索候选证型的鉴别诊断信息，构造对比表：</p>
+        <h4 data-i18n="agent.step3Title">细筛与鉴别（LLM 首次参与）</h4>
+        <p data-i18n="agent.step3Body">检索候选证型的鉴别诊断信息，构造对比表：</p>
         <div class="table-wrap" style="margin: 12px 0;">
           <table>
             <thead>
-              <tr><th>症状</th><th>肾阴虚</th><th>肾阳虚</th><th>肾精不足</th></tr>
+              <tr><th data-i18n="agent.table.symptom">症状</th><th data-i18n="agent.table.kidneyYin">肾阴虚</th><th data-i18n="agent.table.kidneyYang">肾阳虚</th><th data-i18n="agent.table.kidneyEssence">肾精不足</th></tr>
             </thead>
             <tbody>
               <tr><td>畏寒</td><td><span class="tag red">✗</span></td><td><span class="tag green">✓</span></td><td><span class="tag red">✗</span></td></tr>
@@ -779,21 +818,21 @@
             </tbody>
           </table>
         </div>
-        <p><span class="tag red">LLM 参与</span> 让模型<strong>基于对比表选择最匹配的证型</strong>。任务从"复杂辨证推理"降级为"表格阅读理解"。</p>
+        <p data-i18n-html="agent.step3Tag"><span class="tag red">LLM 参与</span> 让模型<strong>基于对比表选择最匹配的证型</strong>。任务从"复杂辨证推理"降级为"表格阅读理解"。</p>
       </div>
     </div>
 
     <div class="step-sequence" style="margin-top: 0;">
       <div class="step-item" data-step="4">
-        <h4>治疗建议生成</h4>
-        <p>检索选中证型的治则治法 + 标准方药，LLM 基于患者具体情况做个性化微调（加减化裁）。</p>
-        <p><span class="tag red">LLM 参与</span></p>
+        <h4 data-i18n="agent.step4Title">治疗建议生成</h4>
+        <p data-i18n="agent.step4Body">检索选中证型的治则治法 + 标准方药，LLM 基于患者具体情况做个性化微调（加减化裁）。</p>
+        <p><span class="tag red" data-i18n="agent.llmTag">LLM 参与</span></p>
       </div>
     </div>
 
     <div class="highlight-box" style="margin-top: 28px;">
-      <h4>为什么这么做有效</h4>
-      <p>任务的认知复杂度从 <strong>Bloom 分类学的高阶（辨证推理、综合分析）</strong>降阶为 <strong>低阶（信息提取、模式匹配）</strong>。小模型（~7B）在模式匹配任务上的表现通常接近大模型。</p>
+      <h4 data-i18n="agent.highlightTitle">为什么这么做有效</h4>
+      <p data-i18n-html="agent.highlightBody">任务的认知复杂度从 <strong>Bloom 分类学的高阶（辨证推理、综合分析）</strong>降阶为 <strong>低阶（信息提取、模式匹配）</strong>。小模型（~7B）在模式匹配任务上的表现通常接近大模型。</p>
     </div>
   </div>
 </section>
@@ -803,9 +842,9 @@
      ============================================ -->
 <section id="context">
   <div class="container">
-    <span class="section-label">Prompt Engineering</span>
-    <h2>Context 编排设计</h2>
-    <p>这是 RAG 与 LLM 之间的桥梁。编排后的 Context 模板如下：</p>
+    <span class="section-label" data-i18n="context.label">Prompt Engineering</span>
+    <h2 data-i18n="context.title">Context 编排设计</h2>
+    <p data-i18n="context.body">这是 RAG 与 LLM 之间的桥梁。编排后的 Context 模板如下：</p>
 
     <div class="code-block">
 【系统指令】
@@ -856,23 +895,23 @@
     <div class="card-grid card-grid-2" style="margin-top: 24px;">
       <div class="card">
         <div class="card-icon red">①</div>
-        <h3>事实先行</h3>
-        <p>所有需要模型"回忆"的知识（证型标准、症状关联、方剂组成）全部放在 context 中。模型只需要做"匹配"。</p>
+        <h3 data-i18n="context.card1Title">事实先行</h3>
+        <p data-i18n="context.card1Body">所有需要模型"回忆"的知识（证型标准、症状关联、方剂组成）全部放在 context 中。模型只需要做"匹配"。</p>
       </div>
       <div class="card">
         <div class="card-icon red">②</div>
-        <h3>结构化数据</h3>
-        <p>对比表、匹配度分数等结构化信息比段落文本更容易被小模型理解。表格格式优于叙述。</p>
+        <h3 data-i18n="context.card2Title">结构化数据</h3>
+        <p data-i18n="context.card2Body">对比表、匹配度分数等结构化信息比段落文本更容易被小模型理解。表格格式优于叙述。</p>
       </div>
       <div class="card">
         <div class="card-icon red">③</div>
-        <h3>输出格式约束</h3>
-        <p>JSON 格式 + 固定字段 → 方便后续规则校验 → 不依赖模型自由生成能力。</p>
+        <h3 data-i18n="context.card3Title">输出格式约束</h3>
+        <p data-i18n="context.card3Body">JSON 格式 + 固定字段 → 方便后续规则校验 → 不依赖模型自由生成能力。</p>
       </div>
       <div class="card">
         <div class="card-icon red">④</div>
-        <h3>不诱导幻觉</h3>
-        <p>避免"请详细分析"类开放指令。使用"请选择"而不是"请生成"。关闭模型"创造性回答"倾向。</p>
+        <h3 data-i18n="context.card4Title">不诱导幻觉</h3>
+        <p data-i18n="context.card4Body">避免"请详细分析"类开放指令。使用"请选择"而不是"请生成"。关闭模型"创造性回答"倾向。</p>
       </div>
     </div>
   </div>
@@ -883,39 +922,39 @@
      ============================================ -->
 <section id="qa">
   <div class="container">
-    <span class="section-label">Quality Assurance</span>
-    <h2>质量保障层设计</h2>
-    <p>诊断建议不能出错。我们使用规则-based 的 QA 校验来拦截明显错误——<strong>完全不依赖 LLM</strong>。</p>
+    <span class="section-label" data-i18n="qa.label">Quality Assurance</span>
+    <h2 data-i18n="qa.title">质量保障层设计</h2>
+    <p data-i18n-html="qa.body">诊断建议不能出错。我们使用规则-based 的 QA 校验来拦截明显错误——<strong>完全不依赖 LLM</strong>。</p>
 
     <div class="card-grid card-grid-2">
       <div class="card">
         <div class="card-icon green">✓</div>
-        <h3>完整性校验</h3>
-        <p>验必填字段：证型、辨证依据、治则、方药是否齐全。缺一不可。</p>
+        <h3 data-i18n="qa.card1Title">完整性校验</h3>
+        <p data-i18n="qa.card1Body">验必填字段：证型、辨证依据、治则、方药是否齐全。缺一不可。</p>
       </div>
       <div class="card">
         <div class="card-icon green">✓</div>
-        <h3>配伍合理性校验</h3>
-        <p>证型与方药是否配伍合理？如肾阴虚不能用附子、肉桂等大热之品。</p>
+        <h3 data-i18n="qa.card2Title">配伍合理性校验</h3>
+        <p data-i18n="qa.card2Body">证型与方药是否配伍合理？如肾阴虚不能用附子、肉桂等大热之品。</p>
       </div>
       <div class="card">
         <div class="card-icon green">✓</div>
-        <h3>舌脉一致性校验</h3>
-        <p>舌象、脉象与证型是否一致？如舌淡胖苔白滑 + 肾阴虚 → 矛盾检测。</p>
+        <h3 data-i18n="qa.card3Title">舌脉一致性校验</h3>
+        <p data-i18n="qa.card3Body">舌象、脉象与证型是否一致？如舌淡胖苔白滑 + 肾阴虚 → 矛盾检测。</p>
       </div>
       <div class="card">
         <div class="card-icon green">✓</div>
-        <h3>置信度评估</h3>
-        <p>基于信息完整度给诊断结果打分。缺舌象/脉象时自动降级为"疑似诊断"。</p>
+        <h3 data-i18n="qa.card4Title">置信度评估</h3>
+        <p data-i18n="qa.card4Body">基于信息完整度给诊断结果打分。缺舌象/脉象时自动降级为"疑似诊断"。</p>
       </div>
     </div>
 
     <div class="highlight-box green" style="margin-top: 24px;">
-      <h4>最小完备信息集</h4>
-      <p><strong>必需：</strong>主症、舌质、舌苔、脉象</p>
-      <p><strong>强烈建议：</strong>次症（≥2）、二便、饮食、睡眠</p>
-      <p><strong>可选：</strong>月经（女性）、既往史、过敏史</p>
-      <p style="margin-top: 8px;">Agent 的第一轮交互应该是追问缺失信息。信息完整度直接决定诊断置信度。</p>
+      <h4 data-i18n="qa.minInfoTitle">最小完备信息集</h4>
+      <p data-i18n-html="qa.minInfoReq"><strong>必需：</strong>主症、舌质、舌苔、脉象</p>
+      <p data-i18n-html="qa.minInfoSug"><strong>强烈建议：</strong>次症（≥2）、二便、饮食、睡眠</p>
+      <p data-i18n-html="qa.minInfoOpt"><strong>可选：</strong>月经（女性）、既往史、过敏史</p>
+      <p style="margin-top: 8px;" data-i18n="qa.minInfoNote">Agent 的第一轮交互应该是追问缺失信息。信息完整度直接决定诊断置信度。</p>
     </div>
   </div>
 </section>
@@ -925,51 +964,51 @@
      ============================================ -->
 <section id="feasibility">
   <div class="container">
-    <span class="section-label">Analysis</span>
-    <h2>可行性分析</h2>
+    <span class="section-label" data-i18n="feas.label">Analysis</span>
+    <h2 data-i18n="feas.title">可行性分析</h2>
 
-    <h3>优势因素</h3>
+    <h3 data-i18n="feas.strengthsTitle">优势因素</h3>
     <div class="card-grid card-grid-2">
       <div class="card">
         <div class="card-icon green">✓</div>
-        <h3>辨证的结构化特征</h3>
-        <p>证型是有限集合（约 200-400 个基础证型），本质是 pattern matching，非常适合 RAG + 规则引擎。</p>
+        <h3 data-i18n="feas.strength1Title">辨证的结构化特征</h3>
+        <p data-i18n="feas.strength1Body">证型是有限集合（约 200-400 个基础证型），本质是 pattern matching，非常适合 RAG + 规则引擎。</p>
       </div>
       <div class="card">
         <div class="card-icon green">✓</div>
-        <h3>推理链拆分</h3>
-        <p>复杂辨证拆解为 4 个简单步骤，每步只做小模型能做的事。认知负载大幅降低。</p>
+        <h3 data-i18n="feas.strength2Title">推理链拆分</h3>
+        <p data-i18n="feas.strength2Body">复杂辨证拆解为 4 个简单步骤，每步只做小模型能做的事。认知负载大幅降低。</p>
       </div>
       <div class="card">
         <div class="card-icon green">✓</div>
-        <h3>Context 编排补足短板</h3>
-        <p>小模型最弱的知识记忆、复杂推理全部由 context 补足。模型只需做模式匹配。</p>
+        <h3 data-i18n="feas.strength3Title">Context 编排补足短板</h3>
+        <p data-i18n="feas.strength3Body">小模型最弱的知识记忆、复杂推理全部由 context 补足。模型只需做模式匹配。</p>
       </div>
       <div class="card">
         <div class="card-icon green">✓</div>
-        <h3>规则校验保障底线</h3>
-        <p>规则-based QA 层可拦截绝大多数明显错误，保证诊断建议的基本可靠性。</p>
+        <h3 data-i18n="feas.strength4Title">规则校验保障底线</h3>
+        <p data-i18n="feas.strength4Body">规则-based QA 层可拦截绝大多数明显错误，保证诊断建议的基本可靠性。</p>
       </div>
       <div class="card">
         <div class="card-icon green">✓</div>
-        <h3>主动追问机制</h3>
-        <p>Agent 可系统性地询问舌象、脉象等缺失信息，提高诊断完整度和置信度。</p>
+        <h3 data-i18n="feas.strength5Title">主动追问机制</h3>
+        <p data-i18n="feas.strength5Body">Agent 可系统性地询问舌象、脉象等缺失信息，提高诊断完整度和置信度。</p>
       </div>
       <div class="card">
         <div class="card-icon green">✓</div>
-        <h3>可增量迭代</h3>
-        <p>数据层独立于模型层，新增证型、优化鉴别逻辑不依赖模型更新。迭代成本低。</p>
+        <h3 data-i18n="feas.strength6Title">可增量迭代</h3>
+        <p data-i18n="feas.strength6Body">数据层独立于模型层，新增证型、优化鉴别逻辑不依赖模型更新。迭代成本低。</p>
       </div>
     </div>
 
-    <h3 style="margin-top: 40px;">风险与限制</h3>
+    <h3 style="margin-top: 40px;" data-i18n="feas.risksTitle">风险与限制</h3>
     <div class="table-wrap risk-table">
       <table>
         <thead>
           <tr>
-            <th>风险</th>
-            <th>严重度</th>
-            <th>缓解措施</th>
+            <th data-i18n="feas.riskCol1">风险</th>
+            <th data-i18n="feas.riskCol2">严重度</th>
+            <th data-i18n="feas.riskCol3">缓解措施</th>
           </tr>
         </thead>
         <tbody>
@@ -1002,42 +1041,42 @@
       </table>
     </div>
 
-    <h3 style="margin-top: 40px;">预期质量评估</h3>
+    <h3 style="margin-top: 40px;" data-i18n="feas.qualityTitle">预期质量评估</h3>
     <div class="gauge-grid">
       <div class="gauge-item">
-        <div class="gauge-label">单一典型证型<br>（症状完整）</div>
+        <div class="gauge-label" data-i18n-html="feas.gauge1Label">单一典型证型<br>（症状完整）</div>
         <div class="gauge-value" style="color: var(--green-700);">85-90%</div>
-        <div class="gauge-desc">高置信度诊断</div>
+        <div class="gauge-desc" data-i18n="feas.gauge1Desc">高置信度诊断</div>
       </div>
       <div class="gauge-item">
-        <div class="gauge-label">常见复合证型<br>（症状完整）</div>
+        <div class="gauge-label" data-i18n-html="feas.gauge2Label">常见复合证型<br>（症状完整）</div>
         <div class="gauge-value" style="color: var(--gold-600);">70-80%</div>
-        <div class="gauge-desc">良好，需人工复核</div>
+        <div class="gauge-desc" data-i18n="feas.gauge2Desc">良好，需人工复核</div>
       </div>
       <div class="gauge-item">
-        <div class="gauge-label">信息不完整<br>（缺舌脉）</div>
+        <div class="gauge-label" data-i18n-html="feas.gauge3Label">信息不完整<br>（缺舌脉）</div>
         <div class="gauge-value" style="color: var(--gold-600);">60-70%</div>
-        <div class="gauge-desc">降为"疑似诊断"</div>
+        <div class="gauge-desc" data-i18n="feas.gauge3Desc">降为"疑似诊断"</div>
       </div>
       <div class="gauge-item">
-        <div class="gauge-label">复杂兼夹<br>罕见证型</div>
+        <div class="gauge-label" data-i18n-html="feas.gauge4Label">复杂兼夹<br>罕见证型</div>
         <div class="gauge-value" style="color: var(--red-600);">50-60%</div>
-        <div class="gauge-desc">输出"保留诊断"</div>
+        <div class="gauge-desc" data-i18n="feas.gauge4Desc">输出"保留诊断"</div>
       </div>
     </div>
 
     <details class="info-details" style="margin-top: 28px;">
-      <summary>关于"Edge Mode + 小模型"的可行性</summary>
+      <summary data-i18n="feas.detailsSummary">关于"Edge Mode + 小模型"的可行性</summary>
       <div class="details-body">
-        <p>推荐模型（根据硬件条件选择）：</p>
+        <p data-i18n="feas.detailsP1">推荐模型（根据硬件条件选择）：</p>
         <ul style="padding-left: 20px; margin: 8px 0;">
           <li><strong>Qwen2.5-7B-Instruct</strong> — 中文场景首选，指令跟随能力强</li>
           <li><strong>Yi-1.5-6B-Chat</strong> — 中文医学领域表现较好</li>
           <li><strong>DeepSeek-V2-Lite-Chat</strong> — 推理效率高，适合低配硬件</li>
           <li><strong>InternLM2-7B</strong> — 上海 AI Lab 出品，中文医学术语覆盖好</li>
         </ul>
-        <p>如果硬件只能跑 <strong>3B 以下模型</strong>，建议退一步将定位改为"诊断建议助手"而非"诊断结论系统"，同时加强追问层和信息完整度校验，控制输出置信度。</p>
-        <p style="margin-top: 8px;"><strong>Embedding 模型选型建议：</strong>不要用通用 embedding。TCM 术语的语义空间很特殊。优先选择中文医学领域专用 embedding（如 PULSE、华佗系列的 embedding 模型），或使用领域数据自行微调。</p>
+        <p data-i18n-html="feas.detailsP3">如果硬件只能跑 <strong>3B 以下模型</strong>，建议退一步将定位改为"诊断建议助手"而非"诊断结论系统"，同时加强追问层和信息完整度校验，控制输出置信度。</p>
+        <p style="margin-top: 8px;" data-i18n-html="feas.detailsP4"><strong>Embedding 模型选型建议：</strong>不要用通用 embedding。TCM 术语的语义空间很特殊。优先选择中文医学领域专用 embedding（如 PULSE、华佗系列的 embedding 模型），或使用领域数据自行微调。</p>
       </div>
     </details>
   </div>
@@ -1048,41 +1087,41 @@
      ============================================ -->
 <section id="recommend">
   <div class="container">
-    <span class="section-label">Recommendations</span>
-    <h2>关键建议</h2>
-    <p>基于上述设计，以下是实施时最需要关注的优先级：</p>
+    <span class="section-label" data-i18n="rec.label">Recommendations</span>
+    <h2 data-i18n="rec.title">关键建议</h2>
+    <p data-i18n="rec.body">基于上述设计，以下是实施时最需要关注的优先级：</p>
 
     <ol class="priority-list">
       <li>
-        <strong>数据质量是第一优先级</strong>
-        症状→证型映射矩阵的准确性和覆盖率直接决定系统上限。先花 70% 的精力把数据做扎实，再考虑模型选择和编排优化。
+        <strong data-i18n="rec.prio1Title">数据质量是第一优先级</strong>
+        <span data-i18n="rec.prio1Body">症状→证型映射矩阵的准确性和覆盖率直接决定系统上限。先花 70% 的精力把数据做扎实，再考虑模型选择和编排优化。</span>
       </li>
       <li>
-        <strong>鉴别诊断矩阵不可省略</strong>
-        这是让小模型"超越自己"的关键。预计算相似证型的区分要点，通过 context 直接给到模型，比让模型自己推理可靠得多。
+        <strong data-i18n="rec.prio2Title">鉴别诊断矩阵不可省略</strong>
+        <span data-i18n="rec.prio2Body">这是让小模型"超越自己"的关键。预计算相似证型的区分要点，通过 context 直接给到模型，比让模型自己推理可靠得多。</span>
       </li>
       <li>
-        <strong>信息采集先于诊断</strong>
-        Agent 第一轮必须是追问：舌象如何？脉象如何？二便？月经？信息完整度是置信度的前提。设计"最小完备信息集"的强行入流程。
+        <strong data-i18n="rec.prio3Title">信息采集先于诊断</strong>
+        <span data-i18n="rec.prio3Body">Agent 第一轮必须是追问：舌象如何？脉象如何？二便？月经？信息完整度是置信度的前提。设计"最小完备信息集"的强行入流程。</span>
       </li>
       <li>
-        <strong>规则 QA 层不可或缺</strong>
-        所有校验逻辑用规则实现，不依赖 LLM。检查证型-方药一致性、舌脉-证型一致性、字段完整性。这是防止误诊的最后防线。
+        <strong data-i18n="rec.prio4Title">规则 QA 层不可或缺</strong>
+        <span data-i18n="rec.prio4Body">所有校验逻辑用规则实现，不依赖 LLM。检查证型-方药一致性、舌脉-证型一致性、字段完整性。这是防止误诊的最后防线。</span>
       </li>
       <li>
-        <strong>输出定位为"辅助参考"</strong>
-        系统定位应该是"中医师决策辅助工具"。输出中明确标注置信度、缺失信息提示，在 UI 上传达"仅供参考"的信号，不给模型超出实际能力范围的责任。
+        <strong data-i18n="rec.prio5Title">输出定位为"辅助参考"</strong>
+        <span data-i18n="rec.prio5Body">系统定位应该是"中医师决策辅助工具"。输出中明确标注置信度、缺失信息提示，在 UI 上传达"仅供参考"的信号，不给模型超出实际能力范围的责任。</span>
       </li>
     </ol>
 
     <div class="highlight-box gold" style="margin-top: 28px;">
-      <h4>最终结论</h4>
-      <p>在条件约束下（Edge Mode、小模型、不可微调），<strong>可以有好的结果</strong>。质量前提是：<strong>数据层 &gt; 编排层 &gt; 模型层</strong>。</p>
-      <p>做好这三件事，可以达到接近可用的辅助诊断水平：</p>
-      <p>① 结构化的证型知识库（含鉴别诊断信息）<br>
+      <h4 data-i18n="rec.conclusionTitle">最终结论</h4>
+      <p data-i18n-html="rec.conclusionP1">在条件约束下（Edge Mode、小模型、不可微调），<strong>可以有好的结果</strong>。质量前提是：<strong>数据层 &gt; 编排层 &gt; 模型层</strong>。</p>
+      <p data-i18n="rec.conclusionP2">做好这三件事，可以达到接近可用的辅助诊断水平：</p>
+      <p data-i18n="rec.conclusionP3">① 结构化的证型知识库（含鉴别诊断信息）<br>
       ② 多步推理链 + 信息采集流程<br>
       ③ 规则-based QA 校验层</p>
-      <p style="margin-top: 8px;">如果把数据层做到 90 分，编排做到 80 分，模型 60 分就够用。</p>
+      <p style="margin-top: 8px;" data-i18n="rec.conclusionP4">如果把数据层做到 90 分，编排做到 80 分，模型 60 分就够用。</p>
     </div>
   </div>
 </section>
@@ -1092,10 +1131,210 @@
      ============================================ -->
 <footer class="site-footer">
   <div class="container">
-    <p>TCM 辅助诊断 Agent · 系统设计文档</p>
-    <p>基于 Edge Mode LLM + RAG 架构 · 面向小规模部署的轻量级中医辨证辅助系统</p>
+    <p data-i18n="footer.title">TCM 辅助诊断 Agent · 系统设计文档</p>
+    <p data-i18n="footer.subtitle">基于 Edge Mode LLM + RAG 架构 · 面向小规模部署的轻量级中医辨证辅助系统</p>
   </div>
 </footer>
+
+<script>
+/* ============================================
+   i18n / Bilingual Support
+   ============================================ */
+const translations = {
+
+  /* Hero */
+  'hero.title': { zh: 'TCM 辅助诊断 Agent<br>系统设计', en: 'TCM Diagnostic Assistant<br>System Design' },
+  'hero.subtitle': { zh: '基于 Edge Mode LLM + RAG 架构的中医辨证论治辅助诊断系统设计', en: 'A TCM Pattern Differentiation &amp; Treatment System Based on Edge Mode LLM + RAG Architecture' },
+  'hero.meta.status': { zh: '⏺ 项目状态：架构设计阶段', en: '⏺ Status: Architecture Design Phase' },
+  'hero.meta.model': { zh: '⏺ 模型策略：Edge Mode（本地部署小模型）', en: '⏺ Model Strategy: Edge Mode (Local Small Model)' },
+  'hero.meta.method': { zh: '⏺ 核心方法：RAG + 结构化推理链', en: '⏺ Core Method: RAG + Structured Reasoning Chain' },
+  'hero.nav.arch': { zh: '架构总览', en: 'Architecture Overview' },
+  'hero.nav.rag': { zh: 'RAG 数据层', en: 'RAG Data Layer' },
+  'hero.nav.agent': { zh: 'Agent 推理链', en: 'Agent Reasoning Chain' },
+  'hero.nav.context': { zh: 'Context 编排', en: 'Context Engineering' },
+  'hero.nav.qa': { zh: '质量保障', en: 'Quality Assurance' },
+  'hero.nav.feasibility': { zh: '可行性分析', en: 'Feasibility Analysis' },
+  'hero.nav.recommend': { zh: '关键建议', en: 'Key Recommendations' },
+
+  /* Architecture */
+  'arch.label': { zh: 'Architecture', en: 'Architecture' },
+  'arch.title': { zh: '系统架构总览', en: 'System Architecture Overview' },
+  'arch.body': { zh: '整体架构分为四层：Agent 编排层 → Context 组合层 → LLM 推理层 → 基础数据层。每层职责清晰，小模型只做"阅读理解"式的匹配工作，复杂推理由上层预先完成。', en: 'The architecture consists of four layers: Agent Orchestration → Context Composition → LLM Inference → Knowledge Base. Each layer has clear responsibilities — the small model only does reading-comprehension-style matching, while complex reasoning is pre-computed by upper layers.' },
+  'arch.layer.agent': { zh: 'Agent Layer &nbsp;·&nbsp; 智能编排层', en: 'Agent Layer &nbsp;·&nbsp; Intelligent Orchestration' },
+  'arch.layer.agentDesc': { zh: '问诊管理 · RAG 编排 · 推理链 · 质量校验', en: 'Inquiry Management · RAG Orchestration · Reasoning Chain · Quality Check' },
+  'arch.layer.context': { zh: 'Context Composition Layer &nbsp;·&nbsp; 上下文编排层', en: 'Context Composition Layer' },
+  'arch.layer.contextDesc': { zh: '将检索结果编排为 LLM 可消费的 Structured Context', en: 'Transforms retrieved data into LLM-consumable structured context' },
+  'arch.layer.llmDesc': { zh: 'Local Small Model (~7B) · 不微调 · 不记忆', en: 'Local Small Model (~7B) · No Fine-tuning · No Memory' },
+  'arch.layer.kbDesc': { zh: '症状标准化引擎 · 证型 KB · 鉴别诊断矩阵 · 方药库', en: 'Symptom Standardization · Pattern KB · Differential Diagnosis Matrix · Formula Library' },
+  'arch.highlightTitle': { zh: '核心设计理念', en: 'Core Design Philosophy' },
+  'arch.highlightP1': { zh: '质量排序：<strong>数据质量 &gt; Context 编排质量 &gt; Agent 推理链设计 &gt; 模型大小</strong>', en: 'Quality Priority: <strong>Data Quality &gt; Context Quality &gt; Agent Reasoning &gt; Model Size</strong>' },
+  'arch.highlightP2': { zh: 'Context 中 <strong>避免让 LLM 做回忆/检索类工作</strong>——所有事实性信息已在 context 中。只让 LLM 做"匹配"和"组织"——这是小模型相对擅长的。', en: '<strong>Avoid asking the LLM to recall or retrieve</strong> — all factual info is already in the context. Let the LLM only do matching and organizing — tasks small models excel at.' },
+
+  /* RAG */
+  'rag.label': { zh: 'Data Layer', en: 'Data Layer' },
+  'rag.title': { zh: 'RAG 数据层设计', en: 'RAG Data Layer Design' },
+  'rag.body': { zh: '数据质量是整个系统的基础。我们分为三个核心子模块构建。', en: 'Data quality is the foundation of the entire system. We build it in three core modules.' },
+  'rag.sub1': { zh: '① 症状标准化层', en: '① Symptom Standardization Layer' },
+  'rag.sub1Body': { zh: '病人主诉是自然语言，必须先映射到标准 TCM 术语。此环节<strong>完全不经过 LLM</strong>，由规则引擎 + embedding 检索完成。', en: 'Patient complaints are in natural language and must be mapped to standard TCM terminology. This step <strong>bypasses the LLM entirely</strong>, using rule engine + embedding retrieval.' },
+  'rag.sub2': { zh: '② 证型知识库结构', en: '② Pattern Knowledge Base Structure' },
+  'rag.sub2Body': { zh: '这是 RAG 的核心数据集。每条记录包含以下字段：', en: 'This is the core dataset for RAG. Each record contains the following fields:' },
+  'rag.sub3': { zh: '③ 鉴别诊断矩阵（关键差异化设计）', en: '③ Differential Diagnosis Matrix (Key Differentiator)' },
+  'rag.sub3Body': { zh: '这是让结果质量优于裸小模型的关键。为每个证型预计算鉴别路径：', en: 'This is the key to outperforming a bare small model. Pre-compute differentiation paths for each pattern:' },
+  'rag.table.pattern': { zh: '证型', en: 'Pattern' },
+  'rag.table.keyPoint': { zh: '核心鉴别点', en: 'Key Features' },
+  'rag.table.similar': { zh: '相似证型', en: 'Similar Pattern' },
+  'rag.table.distinction': { zh: '区分关键', en: 'Distinction Key' },
+  'rag.retrievalNote': { zh: '检索时<strong>同时返回相似证型及其区分要点</strong>，小模型不需要"自己推理出差异"，而是直接拿到对比表。', en: 'During retrieval, <strong>return similar patterns and their key distinctions together</strong>. The small model doesn\'t need to figure out differences — it gets the comparison table directly.' },
+  'rag.buildTitle': { zh: '数据层构建建议', en: 'Data Layer Construction Recommendations' },
+  'rag.card1Title': { zh: '症状→证型映射矩阵', en: 'Symptom → Pattern Mapping Matrix' },
+  'rag.card1Body': { zh: '每个标准症状指向哪些潜在证型及其权重。这是 embedding 检索的基础。', en: 'Which potential patterns each standard symptom maps to, with weights. The foundation of embedding retrieval.' },
+  'rag.card2Title': { zh: '证型鉴别诊断表', en: 'Pattern Differential Diagnosis Table' },
+  'rag.card2Body': { zh: '证型之间的相似度矩阵与鉴别要点。确保鉴别诊断的完整性。', en: 'Similarity matrix and differentiation keys between patterns. Ensures complete differential diagnosis.' },
+  'rag.card3Title': { zh: '证型→方药对照', en: 'Pattern → Formula Reference' },
+  'rag.card3Body': { zh: '标准方剂、加减法、禁忌配伍。保证治疗建议的可靠性。', en: 'Standard formulas, modifications, and contraindications. Ensures reliable treatment recommendations.' },
+
+  /* Agent / Reasoning Chain */
+  'agent.label': { zh: 'Reasoning Chain', en: 'Reasoning Chain' },
+  'agent.title': { zh: 'Agent 推理链设计', en: 'Agent Reasoning Chain Design' },
+  'agent.body': { zh: '小模型不能做复杂推理，所以我们将推理<strong>摊平为多个简单步骤</strong>，每步只做一种判断。', en: 'Small models can\'t handle complex reasoning, so we <strong>flatten reasoning into multiple simple steps</strong>, each making just one type of judgment.' },
+  'agent.step1Title': { zh: '症状收集与整理', en: 'Symptom Collection &amp; Organization' },
+  'agent.step1Body': { zh: '<strong>输入：</strong>病人主诉 + 追问回答 &nbsp;→&nbsp; <strong>输出：</strong>结构化症状清单 {主症, 次症, 舌, 脉, 其他}', en: '<strong>Input:</strong> Patient complaint + follow-up answers &nbsp;→&nbsp; <strong>Output:</strong> Structured symptom list {primary, secondary, tongue, pulse, other}' },
+  'agent.step1Tag': { zh: '<span class="tag green">不依赖 LLM</span> 完全由规则 + 追问模板完成。', en: '<span class="tag green">No LLM</span> Entirely done by rules + follow-up templates.' },
+  'agent.step2Title': { zh: '候选证型粗筛 (Top-K Retrieval)', en: 'Candidate Pattern Screening (Top-K Retrieval)' },
+  'agent.step2Body': { zh: '<strong>Query：</strong> [主症 embedding] + [次症 embedding] &nbsp;→&nbsp; <strong>检索：</strong> Top-5 候选证型 + 匹配度分数', en: '<strong>Query:</strong> [primary symptom embedding] + [secondary symptom embedding] &nbsp;→&nbsp; <strong>Retrieval:</strong> Top-5 candidate patterns + match scores' },
+  'agent.step2Tag': { zh: '<span class="tag green">不依赖 LLM</span> 向量数据库语义检索，只看症状层面的相似度。', en: '<span class="tag green">No LLM</span> Vector database semantic search based on symptom-level similarity.' },
+  'agent.step3Title': { zh: '细筛与鉴别（LLM 首次参与）', en: 'Refine &amp; Differentiate (First LLM Involvement)' },
+  'agent.step3Body': { zh: '检索候选证型的鉴别诊断信息，构造对比表：', en: 'Retrieve differential diagnosis info for candidate patterns and construct a comparison table:' },
+  'agent.table.symptom': { zh: '症状', en: 'Symptom' },
+  'agent.table.kidneyYin': { zh: '肾阴虚', en: 'Kidney Yin Def.' },
+  'agent.table.kidneyYang': { zh: '肾阳虚', en: 'Kidney Yang Def.' },
+  'agent.table.kidneyEssence': { zh: '肾精不足', en: 'Kidney Essence Def.' },
+  'agent.step3Tag': { zh: '<span class="tag red">LLM 参与</span> 让模型<strong>基于对比表选择最匹配的证型</strong>。任务从"复杂辨证推理"降级为"表格阅读理解"。', en: '<span class="tag red">LLM Involved</span> Let the model <strong>select the best-matching pattern from the table</strong>. The task is downgraded from complex reasoning to table reading comprehension.' },
+  'agent.step4Title': { zh: '治疗建议生成', en: 'Treatment Recommendation Generation' },
+  'agent.step4Body': { zh: '检索选中证型的治则治法 + 标准方药，LLM 基于患者具体情况做个性化微调（加减化裁）。', en: 'Retrieve the treatment principle and standard formula for the selected pattern. The LLM makes personalized adjustments based on the patient\'s condition.' },
+  'agent.llmTag': { zh: 'LLM 参与', en: 'LLM Involved' },
+  'agent.highlightTitle': { zh: '为什么这么做有效', en: 'Why This Works' },
+  'agent.highlightBody': { zh: '任务的认知复杂度从 <strong>Bloom 分类学的高阶（辨证推理、综合分析）</strong>降阶为 <strong>低阶（信息提取、模式匹配）</strong>。小模型（~7B）在模式匹配任务上的表现通常接近大模型。', en: 'The cognitive complexity drops from <strong>Bloom\'s higher-order (reasoning, synthesis)</strong> to <strong>lower-order (info extraction, pattern matching)</strong>. Small models (~7B) perform nearly as well as large models on pattern matching.' },
+
+  /* Context */
+  'context.label': { zh: 'Prompt Engineering', en: 'Prompt Engineering' },
+  'context.title': { zh: 'Context 编排设计', en: 'Context Engineering Design' },
+  'context.body': { zh: '这是 RAG 与 LLM 之间的桥梁。编排后的 Context 模板如下：', en: 'This is the bridge between RAG and LLM. The engineered context template:' },
+  'context.card1Title': { zh: '事实先行', en: 'Facts First' },
+  'context.card1Body': { zh: '所有需要模型"回忆"的知识（证型标准、症状关联、方剂组成）全部放在 context 中。模型只需要做"匹配"。', en: 'All knowledge the model would need to recall (pattern standards, symptom associations, formula compositions) goes in the context. The model just matches.' },
+  'context.card2Title': { zh: '结构化数据', en: 'Structured Data' },
+  'context.card2Body': { zh: '对比表、匹配度分数等结构化信息比段落文本更容易被小模型理解。表格格式优于叙述。', en: 'Structured info like comparison tables and match scores is easier for small models to parse than prose. Tables beat paragraphs.' },
+  'context.card3Title': { zh: '输出格式约束', en: 'Output Format Constraints' },
+  'context.card3Body': { zh: 'JSON 格式 + 固定字段 → 方便后续规则校验 → 不依赖模型自由生成能力。', en: 'JSON format + fixed fields → enables rule-based validation → independent of model free-generation ability.' },
+  'context.card4Title': { zh: '不诱导幻觉', en: 'Don\'t Induce Hallucinations' },
+  'context.card4Body': { zh: '避免"请详细分析"类开放指令。使用"请选择"而不是"请生成"。关闭模型"创造性回答"倾向。', en: 'Avoid open-ended instructions like "please analyze in detail". Use "select" instead of "generate". Discourage creative output.' },
+
+  /* QA */
+  'qa.label': { zh: 'Quality Assurance', en: 'Quality Assurance' },
+  'qa.title': { zh: '质量保障层设计', en: 'Quality Assurance Layer Design' },
+  'qa.body': { zh: '诊断建议不能出错。我们使用规则-based 的 QA 校验来拦截明显错误——<strong>完全不依赖 LLM</strong>。', en: 'Diagnostic recommendations must be reliable. We use rule-based QA checks to catch obvious errors — <strong>no LLM dependency</strong>.' },
+  'qa.card1Title': { zh: '完整性校验', en: 'Completeness Check' },
+  'qa.card1Body': { zh: '验必填字段：证型、辨证依据、治则、方药是否齐全。缺一不可。', en: 'Verify required fields: pattern, diagnostic basis, treatment principle, formula. All must be present.' },
+  'qa.card2Title': { zh: '配伍合理性校验', en: 'Formula Compatibility Check' },
+  'qa.card2Body': { zh: '证型与方药是否配伍合理？如肾阴虚不能用附子、肉桂等大热之品。', en: 'Is the formula compatible with the pattern? E.g., Kidney Yin Deficiency should not use hot herbs like Aconite or Cinnamon.' },
+  'qa.card3Title': { zh: '舌脉一致性校验', en: 'Tongue-Pulse Consistency Check' },
+  'qa.card3Body': { zh: '舌象、脉象与证型是否一致？如舌淡胖苔白滑 + 肾阴虚 → 矛盾检测。', en: 'Do tongue and pulse findings match the pattern? E.g., pale puffy tongue + greasy coating with Kidney Yin Def. → contradiction.' },
+  'qa.card4Title': { zh: '置信度评估', en: 'Confidence Assessment' },
+  'qa.card4Body': { zh: '基于信息完整度给诊断结果打分。缺舌象/脉象时自动降级为"疑似诊断"。', en: 'Score the diagnosis based on info completeness. Auto-downgrade to "presumptive" when tongue/pulse is missing.' },
+  'qa.minInfoTitle': { zh: '最小完备信息集', en: 'Minimum Complete Information Set' },
+  'qa.minInfoReq': { zh: '<strong>必需：</strong>主症、舌质、舌苔、脉象', en: '<strong>Required:</strong> Primary symptoms, tongue body, tongue coating, pulse' },
+  'qa.minInfoSug': { zh: '<strong>强烈建议：</strong>次症（≥2）、二便、饮食、睡眠', en: '<strong>Strongly recommended:</strong> Secondary symptoms (≥2), stool/urine, appetite, sleep' },
+  'qa.minInfoOpt': { zh: '<strong>可选：</strong>月经（女性）、既往史、过敏史', en: '<strong>Optional:</strong> Menstruation (female), history, allergies' },
+  'qa.minInfoNote': { zh: 'Agent 的第一轮交互应该是追问缺失信息。信息完整度直接决定诊断置信度。', en: 'The agent\'s first interaction should be to ask about missing info. Completeness directly determines confidence.' },
+
+  /* Feasibility */
+  'feas.label': { zh: 'Analysis', en: 'Analysis' },
+  'feas.title': { zh: '可行性分析', en: 'Feasibility Analysis' },
+  'feas.strengthsTitle': { zh: '优势因素', en: 'Strengths' },
+  'feas.strength1Title': { zh: '辨证的结构化特征', en: 'Structured Pattern Differentiation' },
+  'feas.strength1Body': { zh: '证型是有限集合（约 200-400 个基础证型），本质是 pattern matching，非常适合 RAG + 规则引擎。', en: 'Patterns are a finite set (~200-400 basic types), essentially pattern matching — perfect for RAG + rule engine.' },
+  'feas.strength2Title': { zh: '推理链拆分', en: 'Reasoning Chain Decomposition' },
+  'feas.strength2Body': { zh: '复杂辨证拆解为 4 个简单步骤，每步只做小模型能做的事。认知负载大幅降低。', en: 'Complex differentiation broken into 4 simple steps, each doing only what a small model can handle. Cognitive load greatly reduced.' },
+  'feas.strength3Title': { zh: 'Context 编排补足短板', en: 'Context Compensates Weaknesses' },
+  'feas.strength3Body': { zh: '小模型最弱的知识记忆、复杂推理全部由 context 补足。模型只需做模式匹配。', en: 'The small model\'s weakest areas (knowledge recall, complex reasoning) are all supplemented by context.' },
+  'feas.strength4Title': { zh: '规则校验保障底线', en: 'Rule-Based Safety Net' },
+  'feas.strength4Body': { zh: '规则-based QA 层可拦截绝大多数明显错误，保证诊断建议的基本可靠性。', en: 'Rule-based QA catches the vast majority of obvious errors, ensuring basic reliability.' },
+  'feas.strength5Title': { zh: '主动追问机制', en: 'Active Inquiry Mechanism' },
+  'feas.strength5Body': { zh: 'Agent 可系统性地询问舌象、脉象等缺失信息，提高诊断完整度和置信度。', en: 'The agent systematically inquires about tongue, pulse and other missing info to improve completeness and confidence.' },
+  'feas.strength6Title': { zh: '可增量迭代', en: 'Incremental Iteration' },
+  'feas.strength6Body': { zh: '数据层独立于模型层，新增证型、优化鉴别逻辑不依赖模型更新。迭代成本低。', en: 'Data layer is independent of the model layer. Adding patterns or optimizing logic doesn\'t require model updates.' },
+  'feas.risksTitle': { zh: '风险与限制', en: 'Risks &amp; Limitations' },
+  'feas.riskCol1': { zh: '风险', en: 'Risk' },
+  'feas.riskCol2': { zh: '严重度', en: 'Severity' },
+  'feas.riskCol3': { zh: '缓解措施', en: 'Mitigation' },
+  'feas.qualityTitle': { zh: '预期质量评估', en: 'Expected Quality Assessment' },
+  'feas.gauge1Label': { zh: '单一典型证型<br>（症状完整）', en: 'Typical Single Pattern<br>(Complete Symptoms)' },
+  'feas.gauge1Desc': { zh: '高置信度诊断', en: 'High confidence diagnosis' },
+  'feas.gauge2Label': { zh: '常见复合证型<br>（症状完整）', en: 'Common Combined Pattern<br>(Complete Symptoms)' },
+  'feas.gauge2Desc': { zh: '良好，需人工复核', en: 'Good, needs manual review' },
+  'feas.gauge3Label': { zh: '信息不完整<br>（缺舌脉）', en: 'Incomplete Info<br>(Missing Tongue/Pulse)' },
+  'feas.gauge3Desc': { zh: '降为"疑似诊断"', en: 'Downgraded to presumptive' },
+  'feas.gauge4Label': { zh: '复杂兼夹<br>罕见证型', en: 'Complex/Rare Pattern' },
+  'feas.gauge4Desc': { zh: '输出"保留诊断"', en: 'Output reserved diagnosis' },
+  'feas.detailsSummary': { zh: '关于"Edge Mode + 小模型"的可行性', en: 'Feasibility of Edge Mode + Small Model' },
+  'feas.detailsP1': { zh: '推荐模型（根据硬件条件选择）：', en: 'Recommended models (based on hardware):' },
+  'feas.detailsP3': { zh: '如果硬件只能跑 <strong>3B 以下模型</strong>，建议退一步将定位改为"诊断建议助手"而非"诊断结论系统"，同时加强追问层和信息完整度校验，控制输出置信度。', en: 'If hardware can only run <strong>sub-3B models</strong>, reposition as a diagnostic suggestion assistant rather than a diagnostic conclusion system, while strengthening inquiry and validation.' },
+  'feas.detailsP4': { zh: '<strong>Embedding 模型选型建议：</strong>不要用通用 embedding。TCM 术语的语义空间很特殊。优先选择中文医学领域专用 embedding（如 PULSE、华佗系列的 embedding 模型），或使用领域数据自行微调。', en: '<strong>Embedding Model Selection:</strong> Avoid general-purpose embeddings. TCM terminology has a unique semantic space. Prefer Chinese medical domain-specific embeddings (e.g., PULSE, Huatuo series) or fine-tune on domain data.' },
+
+  /* Recommendations */
+  'rec.label': { zh: 'Recommendations', en: 'Recommendations' },
+  'rec.title': { zh: '关键建议', en: 'Key Recommendations' },
+  'rec.body': { zh: '基于上述设计，以下是实施时最需要关注的优先级：', en: 'Based on the above design, here are the implementation priorities:' },
+  'rec.prio1Title': { zh: '数据质量是第一优先级', en: 'Data Quality is Priority #1' },
+  'rec.prio1Body': { zh: '症状→证型映射矩阵的准确性和覆盖率直接决定系统上限。先花 70% 的精力把数据做扎实，再考虑模型选择和编排优化。', en: 'The accuracy and coverage of the symptom→pattern mapping matrix determine the system\'s ceiling. Spend 70% of effort on solid data before considering model selection.' },
+  'rec.prio2Title': { zh: '鉴别诊断矩阵不可省略', en: 'Differential Diagnosis Matrix is Essential' },
+  'rec.prio2Body': { zh: '这是让小模型"超越自己"的关键。预计算相似证型的区分要点，通过 context 直接给到模型，比让模型自己推理可靠得多。', en: 'This lets a small model punch above its weight. Pre-compute distinction points between similar patterns and feed them via context.' },
+  'rec.prio3Title': { zh: '信息采集先于诊断', en: 'Collect Info Before Diagnosing' },
+  'rec.prio3Body': { zh: 'Agent 第一轮必须是追问：舌象如何？脉象如何？二便？月经？信息完整度是置信度的前提。设计"最小完备信息集"的强行入流程。', en: 'The agent\'s first round must be inquiry: tongue, pulse, stool, menstruation? Info completeness is the prerequisite for confidence.' },
+  'rec.prio4Title': { zh: '规则 QA 层不可或缺', en: 'Rule-Based QA is Indispensable' },
+  'rec.prio4Body': { zh: '所有校验逻辑用规则实现，不依赖 LLM。检查证型-方药一致性、舌脉-证型一致性、字段完整性。这是防止误诊的最后防线。', en: 'All validation must use rules, not the LLM. Check pattern-formula compatibility, tongue-pulse consistency, field completeness. The last line of defense.' },
+  'rec.prio5Title': { zh: '输出定位为"辅助参考"', en: 'Output as Auxiliary Reference' },
+  'rec.prio5Body': { zh: '系统定位应该是"中医师决策辅助工具"。输出中明确标注置信度、缺失信息提示，在 UI 上传达"仅供参考"的信号，不给模型超出实际能力范围的责任。', en: 'Position as a TCM practitioner decision-support tool. Clearly label confidence, missing info, and a "for reference only" signal.' },
+  'rec.conclusionTitle': { zh: '最终结论', en: 'Final Conclusion' },
+  'rec.conclusionP1': { zh: '在条件约束下（Edge Mode、小模型、不可微调），<strong>可以有好的结果</strong>。质量前提是：<strong>数据层 &gt; 编排层 &gt; 模型层</strong>。', en: 'Under constraints (Edge Mode, small model, no fine-tuning), <strong>good results are achievable</strong>. Premise: <strong>Data Layer &gt; Orchestration &gt; Model</strong>.' },
+  'rec.conclusionP2': { zh: '做好这三件事，可以达到接近可用的辅助诊断水平：', en: 'Do these three things well to reach near-usable diagnostic assistance:' },
+  'rec.conclusionP3': { zh: '① 结构化的证型知识库（含鉴别诊断信息）<br>② 多步推理链 + 信息采集流程<br>③ 规则-based QA 校验层', en: '① Structured pattern KB (with differential diagnosis)<br>② Multi-step reasoning + info collection flow<br>③ Rule-based QA validation layer' },
+  'rec.conclusionP4': { zh: '如果把数据层做到 90 分，编排做到 80 分，模型 60 分就够用。', en: 'If data layer scores 90 and orchestration scores 80, a model scoring 60 is enough.' },
+
+  /* Footer */
+  'footer.title': { zh: 'TCM 辅助诊断 Agent · 系统设计文档', en: 'TCM Diagnostic Assistant · System Design Document' },
+  'footer.subtitle': { zh: '基于 Edge Mode LLM + RAG 架构 · 面向小规模部署的轻量级中医辨证辅助系统', en: 'Based on Edge Mode LLM + RAG Architecture · Lightweight TCM Pattern Differentiation Assistant for Small-Scale Deployment' }
+};
+
+let currentLang = 'zh';
+
+function applyLang(lang) {
+  currentLang = lang;
+  /* textContent elements */
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (translations[key] && translations[key][lang]) {
+      el.textContent = translations[key][lang];
+    }
+  });
+  /* innerHTML elements */
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.dataset.i18nHtml;
+    if (translations[key] && translations[key][lang]) {
+      el.innerHTML = translations[key][lang];
+    }
+  });
+  /* toggle active state */
+  document.querySelectorAll('.lang-opt').forEach(el => {
+    el.classList.toggle('active', el.dataset.lang === lang);
+  });
+}
+
+function toggleLang() {
+  const next = currentLang === 'zh' ? 'en' : 'zh';
+  applyLang(next);
+}
+</script>
 
 </body>
 </html>

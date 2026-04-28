@@ -498,6 +498,40 @@
   /* ==============================================
      RESPONSIVE
      ============================================== */
+  /* ==============================================
+     LANGUAGE TOGGLE
+     ============================================== */
+  .lang-toggle {
+    position: fixed;
+    top: 20px;
+    right: 24px;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: .8rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all .3s ease;
+    user-select: none;
+  }
+  .lang-toggle:hover { background: rgba(255,255,255,.15); }
+  .lang-toggle .lang-opt {
+    padding: 2px 8px;
+    border-radius: 12px;
+    transition: all .3s ease;
+  }
+  .lang-toggle .lang-opt.active {
+    background: #C41E3A;
+    color: white;
+  }
+
   @media (max-width: 700px) {
     .slide { padding: 40px 6%; }
     .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 16px; }
@@ -510,6 +544,11 @@
 </head>
 <body>
 
+<div class="lang-toggle" onclick="toggleLang()">
+  <span class="lang-opt active" data-lang="zh">中</span>
+  <span style="color:rgba(255,255,255,.3);font-size:.7rem;">/</span>
+  <span class="lang-opt" data-lang="en">EN</span>
+</div>
 <div class="slides-wrapper" id="slidesWrapper">
 
   <!-- ==========================================
@@ -518,16 +557,16 @@
   <div class="slide active" data-index="0">
     <div class="slide-bg"></div>
     <div class="slide-content">
-      <span class="slide-label red anim d1">TCM · AI 辅助诊断</span>
-      <h1 class="anim d2">
+      <span class="slide-label red anim d1" data-i18n="s1.label">TCM · AI 辅助诊断</span>
+      <h1 class="anim d2" data-i18n-html="s1.title">
         <span class="accent">中医辨证</span> 智能助手
       </h1>
-      <p class="subtitle anim d3">
+      <p class="subtitle anim d3" data-i18n-html="s1.subtitle">
         基于本地部署 AI + 结构化知识库的中医辅助诊断系统<br>
         让每一位中医师都拥有一个可靠的"数字副手"
       </p>
       <div class="flow-row anim d4" style="opacity:.4; font-size:.8rem; gap:4px;">
-        <span>轻量 · 离线 · 可落地</span>
+        <span data-i18n="s1.tagline">轻量 · 离线 · 可落地</span>
       </div>
     </div>
   </div>
@@ -538,15 +577,15 @@
   <div class="slide" data-index="1">
     <div class="slide-bg"></div>
     <div class="slide-content left">
-      <span class="slide-label gold anim-left d1">Why</span>
-      <h2 class="anim-left d2">中医诊断的挑战</h2>
-      <p class="body-text anim-left d3" style="margin-bottom:20px;">
+      <span class="slide-label gold anim-left d1" data-i18n="s2.label">Why</span>
+      <h2 class="anim-left d2" data-i18n="s2.title">中医诊断的挑战</h2>
+      <p class="body-text anim-left d3" style="margin-bottom:20px;" data-i18n="s2.body">
         辨证论治是中医的核心，但现实中有三个突出的痛点：
       </p>
       <ul class="check-list anim d1">
-        <li><strong>经验断层</strong> —— 青年医师缺乏临床积累，辨证准确性不稳定</li>
-        <li><strong>信息不全</strong> —— 问诊容易遗漏关键信息（舌象、脉象等），影响诊断质量</li>
-        <li><strong>AI 不可靠</strong> —— 通用大模型"幻觉"严重，直接给出中药方剂存在安全隐患</li>
+        <li data-i18n-html="s2.item1"><strong>经验断层</strong> —— 青年医师缺乏临床积累，辨证准确性不稳定</li>
+        <li data-i18n-html="s2.item2"><strong>信息不全</strong> —— 问诊容易遗漏关键信息（舌象、脉象等），影响诊断质量</li>
+        <li data-i18n-html="s2.item3"><strong>AI 不可靠</strong> —— 通用大模型"幻觉"严重，直接给出中药方剂存在安全隐患</li>
       </ul>
     </div>
   </div>
@@ -557,22 +596,22 @@
   <div class="slide" data-index="2">
     <div class="slide-bg"></div>
     <div class="slide-content">
-      <span class="slide-label green anim d1">What</span>
-      <h2 class="anim d2">我们的方案：<span class="accent-green">AI + 知识库</span></h2>
-      <p class="subtitle anim d3" style="margin-bottom:8px;">
+      <span class="slide-label green anim d1" data-i18n="s3.label">What</span>
+      <h2 class="anim d2" data-i18n-html="s3.title">我们的方案：<span class="accent-green">AI + 知识库</span></h2>
+      <p class="subtitle anim d3" style="margin-bottom:8px;" data-i18n="s3.subtitle">
         不依赖大模型"死记硬背"，而是让 AI 学会"查资料"
       </p>
 
       <div class="grid-2" style="max-width: 760px; margin: 16px auto 0;">
         <div class="grid-card anim-left d1">
           <div class="icon green">📚</div>
-          <h3>结构化中医知识库</h3>
-          <p>把辨证知识整理成"症状→证型→方药"的对照表，AI 遇到患者时先查表、再判断。</p>
+          <h3 data-i18n="s3.card1Title">结构化中医知识库</h3>
+          <p data-i18n="s3.card1Body">把辨证知识整理成"症状→证型→方药"的对照表，AI 遇到患者时先查表、再判断。</p>
         </div>
         <div class="grid-card anim-left d2">
           <div class="icon red">🧠</div>
-          <h3>本地小模型</h3>
-          <p>7B 参数的小模型部署在本地，无需联网、数据不出院、<strong>零成本 API 调用</strong>。</p>
+          <h3 data-i18n="s3.card2Title">本地小模型</h3>
+          <p data-i18n-html="s3.card2Body">7B 参数的小模型部署在本地，无需联网、数据不出院、<strong>零成本 API 调用</strong>。</p>
         </div>
       </div>
     </div>
@@ -584,32 +623,32 @@
   <div class="slide" data-index="3">
     <div class="slide-bg"></div>
     <div class="slide-content">
-      <span class="slide-label red anim d1">How</span>
-      <h2 class="anim d2">工作流程</h2>
-      <p class="body-text anim d3">四步走，每一步都让 AI 做它最擅长的事</p>
+      <span class="slide-label red anim d1" data-i18n="s4.label">How</span>
+      <h2 class="anim d2" data-i18n="s4.title">工作流程</h2>
+      <p class="body-text anim d3" data-i18n="s4.body">四步走，每一步都让 AI 做它最擅长的事</p>
 
       <div class="flow-row anim d4" style="margin-top:32px;">
-        <span class="flow-item">🗣 患者主诉</span>
+        <span class="flow-item" data-i18n="s4.flow1">🗣 患者主诉</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-item">📋 症状<br><small style="opacity:.5;">标准化</small></span>
+        <span class="flow-item" data-i18n-html="s4.flow2">📋 症状<br><small style="opacity:.5;">标准化</small></span>
         <span class="flow-arrow">→</span>
-        <span class="flow-item">🔍 知识库<br><small style="opacity:.5;">匹配</small></span>
+        <span class="flow-item" data-i18n-html="s4.flow3">🔍 知识库<br><small style="opacity:.5;">匹配</small></span>
         <span class="flow-arrow">→</span>
-        <span class="flow-item">✅ 诊断<br><small style="opacity:.5;">建议</small></span>
+        <span class="flow-item" data-i18n-html="s4.flow4">✅ 诊断<br><small style="opacity:.5;">建议</small></span>
       </div>
 
       <div class="grid-3" style="max-width: 800px; margin: 24px auto 0;">
         <div class="grid-card anim d5">
           <div class="icon slate">1</div>
-          <p style="font-size:.8rem;">系统先<strong>追问</strong>收集完整症状、舌象、脉象</p>
+          <p style="font-size:.8rem;" data-i18n-html="s4.step1">系统先<strong>追问</strong>收集完整症状、舌象、脉象</p>
         </div>
         <div class="grid-card anim d5" style="transition-delay: .15s;">
           <div class="icon slate">2</div>
-          <p style="font-size:.8rem;">从<strong>结构化知识库</strong>中匹配最可能的证型</p>
+          <p style="font-size:.8rem;" data-i18n-html="s4.step2">从<strong>结构化知识库</strong>中匹配最可能的证型</p>
         </div>
         <div class="grid-card anim d5" style="transition-delay: .3s;">
           <div class="icon slate">3</div>
-          <p style="font-size:.8rem;">AI 基于对比表<strong>选择最符合</strong>的证型与建议</p>
+          <p style="font-size:.8rem;" data-i18n-html="s4.step3">AI 基于对比表<strong>选择最符合</strong>的证型与建议</p>
         </div>
       </div>
     </div>
@@ -621,26 +660,26 @@
   <div class="slide" data-index="4">
     <div class="slide-bg"></div>
     <div class="slide-content left">
-      <span class="slide-label green anim-left d1">Why This</span>
-      <h2 class="anim-left d2">为什么这样设计</h2>
+      <span class="slide-label green anim-left d1" data-i18n="s5.label">Why This</span>
+      <h2 class="anim-left d2" data-i18n="s5.title">为什么这样设计</h2>
 
       <div class="grid-2" style="max-width:780px;">
         <div class="grid-card anim-left d1">
           <div class="icon green">🔒</div>
-          <h3>Edge Mode · 本地部署</h3>
+          <h3 data-i18n="s5.card1Title">Edge Mode · 本地部署</h3>
           <ul class="icon-list">
-            <li><span class="icon-em">🔐</span> 患者数据不出医院，<strong>隐私安全</strong></li>
-            <li><span class="icon-em">📡</span> 无需联网，<strong>离线可用</strong></li>
-            <li><span class="icon-em">💰</span> 没有 API 调用费用，<strong>零运营成本</strong></li>
+            <li data-i18n-html="s5.card1Item1"><span class="icon-em">🔐</span> 患者数据不出医院，<strong>隐私安全</strong></li>
+            <li data-i18n-html="s5.card1Item2"><span class="icon-em">📡</span> 无需联网，<strong>离线可用</strong></li>
+            <li data-i18n-html="s5.card1Item3"><span class="icon-em">💰</span> 没有 API 调用费用，<strong>零运营成本</strong></li>
           </ul>
         </div>
         <div class="grid-card anim-left d2">
           <div class="icon gold">📖</div>
-          <h3>RAG · 知识库增强</h3>
+          <h3 data-i18n="s5.card2Title">RAG · 知识库增强</h3>
           <ul class="icon-list">
-            <li><span class="icon-em">🎯</span> AI 不"瞎编"——所有回答<strong>有据可查</strong></li>
-            <li><span class="icon-em">🔄</span> 知识库可以随时更新，<strong>无需重新训练模型</strong></li>
-            <li><span class="icon-em">⚖️</span> 小模型 + 好数据 = 大模型效果</li>
+            <li data-i18n-html="s5.card2Item1"><span class="icon-em">🎯</span> AI 不"瞎编"——所有回答<strong>有据可查</strong></li>
+            <li data-i18n-html="s5.card2Item2"><span class="icon-em">🔄</span> 知识库可以随时更新，<strong>无需重新训练模型</strong></li>
+            <li data-i18n-html="s5.card2Item3"><span class="icon-em">⚖️</span> 小模型 + 好数据 = 大模型效果</li>
           </ul>
         </div>
       </div>
@@ -653,29 +692,29 @@
   <div class="slide" data-index="5">
     <div class="slide-bg"></div>
     <div class="slide-content">
-      <span class="slide-label gold anim d1">Strengths</span>
-      <h2 class="anim d2">四大核心优势</h2>
+      <span class="slide-label gold anim d1" data-i18n="s6.label">Strengths</span>
+      <h2 class="anim d2" data-i18n="s6.title">四大核心优势</h2>
 
       <div class="grid-2" style="max-width: 780px;">
         <div class="grid-card anim-left d1">
           <div class="icon red">📊</div>
-          <h3>结构化的辨证知识</h3>
-          <p>证型是有限集合（约 200-400 种），本质是"模式匹配"。结构化后 AI 判断准确率大幅提升。</p>
+          <h3 data-i18n="s6.card1Title">结构化的辨证知识</h3>
+          <p data-i18n="s6.card1Body">证型是有限集合（约 200-400 种），本质是"模式匹配"。结构化后 AI 判断准确率大幅提升。</p>
         </div>
         <div class="grid-card anim-left d2">
           <div class="icon green">🧩</div>
-          <h3>步骤化推理</h3>
-          <p>复杂辨证拆解为 4 个简单步骤。每步 AI 只做一件事：采集 → 检索 → 对比 → 建议。</p>
+          <h3 data-i18n="s6.card2Title">步骤化推理</h3>
+          <p data-i18n="s6.card2Body">复杂辨证拆解为 4 个简单步骤。每步 AI 只做一件事：采集 → 检索 → 对比 → 建议。</p>
         </div>
         <div class="grid-card anim-left d1">
           <div class="icon gold">🛡️</div>
-          <h3>规则校验兜底</h3>
-          <p>AI 输出后，系统自动检查：证型与方药是否匹配？舌象与脉象是否矛盾？错误自动拦截。</p>
+          <h3 data-i18n="s6.card3Title">规则校验兜底</h3>
+          <p data-i18n="s6.card3Body">AI 输出后，系统自动检查：证型与方药是否匹配？舌象与脉象是否矛盾？错误自动拦截。</p>
         </div>
         <div class="grid-card anim-left d2">
           <div class="icon slate">⏱️</div>
-          <h3>持续迭代</h3>
-          <p>新增证型、优化鉴别逻辑只需更新知识库，完全不依赖模型升级。迭代周期从天缩短到小时。</p>
+          <h3 data-i18n="s6.card4Title">持续迭代</h3>
+          <p data-i18n="s6.card4Body">新增证型、优化鉴别逻辑只需更新知识库，完全不依赖模型升级。迭代周期从天缩短到小时。</p>
         </div>
       </div>
     </div>
@@ -687,30 +726,30 @@
   <div class="slide" data-index="6">
     <div class="slide-bg"></div>
     <div class="slide-content">
-      <span class="slide-label green anim d1">Quality</span>
-      <h2 class="anim d2">预期效果</h2>
-      <p class="body-text anim d3">数据质量决定系统上限——知识库越完善，诊断越准确</p>
+      <span class="slide-label green anim d1" data-i18n="s7.label">Quality</span>
+      <h2 class="anim d2" data-i18n="s7.title">预期效果</h2>
+      <p class="body-text anim d3" data-i18n="s7.body">数据质量决定系统上限——知识库越完善，诊断越准确</p>
 
       <div class="gauge-row anim d4">
         <div class="gauge-item">
           <div class="pct" style="color:#86efac;">85-90%</div>
-          <div class="pct-label">典型单一证型<br><span style="opacity:.5;font-size:.75rem;">症状完整</span></div>
+          <div class="pct-label" data-i18n-html="s7.gauge1Label">典型单一证型<br><span style="opacity:.5;font-size:.75rem;">症状完整</span></div>
         </div>
         <div class="gauge-item">
           <div class="pct" style="color:#fcd34d;">70-80%</div>
-          <div class="pct-label">常见复合证型<br><span style="opacity:.5;font-size:.75rem;">症状完整</span></div>
+          <div class="pct-label" data-i18n-html="s7.gauge2Label">常见复合证型<br><span style="opacity:.5;font-size:.75rem;">症状完整</span></div>
         </div>
         <div class="gauge-item">
           <div class="pct" style="color:#fcd34d;">60-70%</div>
-          <div class="pct-label">信息不完整<br><span style="opacity:.5;font-size:.75rem;">缺舌脉</span></div>
+          <div class="pct-label" data-i18n-html="s7.gauge3Label">信息不完整<br><span style="opacity:.5;font-size:.75rem;">缺舌脉</span></div>
         </div>
         <div class="gauge-item">
           <div class="pct" style="color:#f87171;">50-60%</div>
-          <div class="pct-label">复杂/罕见证型<br><span style="opacity:.5;font-size:.75rem;">保留诊断</span></div>
+          <div class="pct-label" data-i18n-html="s7.gauge4Label">复杂/罕见证型<br><span style="opacity:.5;font-size:.75rem;">保留诊断</span></div>
         </div>
       </div>
 
-      <p class="body-text anim d5" style="font-size:.85rem;margin-top:20px;color:#64748b;">
+      <p class="body-text anim d5" style="font-size:.85rem;margin-top:20px;color:#64748b;" data-i18n="s7.footnote">
         ⚠️ 系统定位为"辅助参考"，最终诊断权始终在医师手中
       </p>
     </div>
@@ -722,8 +761,8 @@
   <div class="slide" data-index="7">
     <div class="slide-bg"></div>
     <div class="slide-content">
-      <span class="slide-label red anim d1">Vision</span>
-      <h2 class="anim d2" style="margin-bottom:20px;">
+      <span class="slide-label red anim d1" data-i18n="s8.label">Vision</span>
+      <h2 class="anim d2" style="margin-bottom:20px;" data-i18n-html="s8.title">
         让每一位中医师<br>
         都拥有一个<span class="accent">可靠的数字副手</span>
       </h2>
@@ -731,22 +770,22 @@
       <div class="grid-3" style="max-width: 780px; margin: 0 auto;">
         <div class="grid-card anim-left d1">
           <div class="icon green">1</div>
-          <h3>建知识库</h3>
-          <p>梳理结构化辨证图谱，打好数据基础</p>
+          <h3 data-i18n="s8.card1Title">建知识库</h3>
+          <p data-i18n="s8.card1Body">梳理结构化辨证图谱，打好数据基础</p>
         </div>
         <div class="grid-card anim-left d2">
           <div class="icon gold">2</div>
-          <h3>搭推理链</h3>
-          <p>设计采集→检索→对比→建议的多步流程</p>
+          <h3 data-i18n="s8.card2Title">搭推理链</h3>
+          <p data-i18n="s8.card2Body">设计采集→检索→对比→建议的多步流程</p>
         </div>
         <div class="grid-card anim-left d3">
           <div class="icon red">3</div>
-          <h3>加校验层</h3>
-          <p>规则拦截明显错误，守住安全底线</p>
+          <h3 data-i18n="s8.card3Title">加校验层</h3>
+          <p data-i18n="s8.card3Body">规则拦截明显错误，守住安全底线</p>
         </div>
       </div>
 
-      <p class="body-text anim d4" style="margin-top: 36px; color: #64748b; font-size: .9rem;">
+      <p class="body-text anim d4" style="margin-top: 36px; color: #64748b; font-size: .9rem;" data-i18n="s8.body">
         数据层 90 分 + 编排层 80 分 = 模型只要有 60 分，就能达到接近可用的辅助诊断水平
       </p>
     </div>
@@ -904,6 +943,111 @@
 
   /* Start */
   startAutoplay();
+</script>
+
+<script>
+/* ==============================================
+   i18n / Bilingual Support
+   ============================================== */
+const translations = {
+  's1.label': { zh: 'TCM · AI 辅助诊断', en: 'TCM · AI-Assisted Diagnosis' },
+  's1.title': { zh: '<span class="accent">中医辨证</span> 智能助手', en: '<span class="accent">TCM Pattern</span> Intelligence Assistant' },
+  's1.subtitle': { zh: '基于本地部署 AI + 结构化知识库的中医辅助诊断系统<br>让每一位中医师都拥有一个可靠的"数字副手"', en: 'An AI-assisted TCM diagnosis system powered by local AI + structured knowledge base<br>Every TCM practitioner deserves a reliable digital assistant' },
+  's1.tagline': { zh: '轻量 · 离线 · 可落地', en: 'Lightweight · Offline · Deployable' },
+
+  's2.label': { zh: 'Why', en: 'Why' },
+  's2.title': { zh: '中医诊断的挑战', en: 'The Challenge of TCM Diagnosis' },
+  's2.body': { zh: '辨证论治是中医的核心，但现实中有三个突出的痛点：', en: 'Pattern differentiation is the core of TCM, but three key pain points exist:' },
+  's2.item1': { zh: '<strong>经验断层</strong> —— 青年医师缺乏临床积累，辨证准确性不稳定', en: '<strong>Experience gap</strong> — Junior practitioners lack clinical exposure, diagnosis accuracy is inconsistent' },
+  's2.item2': { zh: '<strong>信息不全</strong> —— 问诊容易遗漏关键信息（舌象、脉象等），影响诊断质量', en: '<strong>Incomplete info</strong> — Key details (tongue, pulse) are often missed during inquiry, affecting quality' },
+  's2.item3': { zh: '<strong>AI 不可靠</strong> —— 通用大模型"幻觉"严重，直接给出中药方剂存在安全隐患', en: '<strong>Unreliable AI</strong> — General LLMs hallucinate, making direct formula recommendations risky' },
+
+  's3.label': { zh: 'What', en: 'What' },
+  's3.title': { zh: '我们的方案：<span class="accent-green">AI + 知识库</span>', en: 'Our Solution: <span class="accent-green">AI + Knowledge Base</span>' },
+  's3.subtitle': { zh: '不依赖大模型"死记硬背"，而是让 AI 学会"查资料"', en: 'Instead of making the LLM memorize, we teach it to look things up' },
+  's3.card1Title': { zh: '结构化中医知识库', en: 'Structured TCM Knowledge Base' },
+  's3.card1Body': { zh: '把辨证知识整理成"症状→证型→方药"的对照表，AI 遇到患者时先查表、再判断。', en: 'Organize pattern knowledge into symptom→pattern→formula lookup tables. AI checks the table before deciding.' },
+  's3.card2Title': { zh: '本地小模型', en: 'Local Small Model' },
+  's3.card2Body': { zh: '7B 参数的小模型部署在本地，无需联网、数据不出院、<strong>零成本 API 调用</strong>。', en: 'A 7B-parameter model runs locally — no internet needed, data stays on-premise, <strong>zero API costs</strong>.' },
+
+  's4.label': { zh: 'How', en: 'How' },
+  's4.title': { zh: '工作流程', en: 'Workflow' },
+  's4.body': { zh: '四步走，每一步都让 AI 做它最擅长的事', en: 'Four steps, each letting AI do what it does best' },
+  's4.flow1': { zh: '🗣 患者主诉', en: '🗣 Patient Complaints' },
+  's4.flow2': { zh: '📋 症状<br><small style="opacity:.5;">标准化</small>', en: '📋 Symptom<br><small style="opacity:.5;">Standardization</small>' },
+  's4.flow3': { zh: '🔍 知识库<br><small style="opacity:.5;">匹配</small>', en: '🔍 Knowledge Base<br><small style="opacity:.5;">Matching</small>' },
+  's4.flow4': { zh: '✅ 诊断<br><small style="opacity:.5;">建议</small>', en: '✅ Diagnosis<br><small style="opacity:.5;">Recommendation</small>' },
+  's4.step1': { zh: '系统先<strong>追问</strong>收集完整症状、舌象、脉象', en: 'System <strong>inquires</strong> to collect complete symptoms, tongue, and pulse' },
+  's4.step2': { zh: '从<strong>结构化知识库</strong>中匹配最可能的证型', en: 'Match most likely patterns from the <strong>structured knowledge base</strong>' },
+  's4.step3': { zh: 'AI 基于对比表<strong>选择最符合</strong>的证型与建议', en: 'AI <strong>selects the best-matching</strong> pattern and recommendations from a comparison table' },
+
+  's5.label': { zh: 'Why This', en: 'Why This' },
+  's5.title': { zh: '为什么这样设计', en: 'Why This Design' },
+  's5.card1Title': { zh: 'Edge Mode · 本地部署', en: 'Edge Mode · Local Deployment' },
+  's5.card1Item1': { zh: '<span class="icon-em">🔐</span> 患者数据不出医院，<strong>隐私安全</strong>', en: '<span class="icon-em">🔐</span> Patient data stays in-house, <strong>privacy safe</strong>' },
+  's5.card1Item2': { zh: '<span class="icon-em">📡</span> 无需联网，<strong>离线可用</strong>', en: '<span class="icon-em">📡</span> No internet needed, <strong>offline ready</strong>' },
+  's5.card1Item3': { zh: '<span class="icon-em">💰</span> 没有 API 调用费用，<strong>零运营成本</strong>', en: '<span class="icon-em">💰</span> No API costs, <strong>zero operational expense</strong>' },
+  's5.card2Title': { zh: 'RAG · 知识库增强', en: 'RAG · Knowledge Base Augmentation' },
+  's5.card2Item1': { zh: '<span class="icon-em">🎯</span> AI 不"瞎编"——所有回答<strong>有据可查</strong>', en: '<span class="icon-em">🎯</span> AI doesn\'t fabricate — every answer is <strong>verifiable</strong>' },
+  's5.card2Item2': { zh: '<span class="icon-em">🔄</span> 知识库可以随时更新，<strong>无需重新训练模型</strong>', en: '<span class="icon-em">🔄</span> Knowledge base updates anytime, <strong>no model retraining</strong>' },
+  's5.card2Item3': { zh: '<span class="icon-em">⚖️</span> 小模型 + 好数据 = 大模型效果', en: '<span class="icon-em">⚖️</span> Small model + good data = large model results' },
+
+  's6.label': { zh: 'Strengths', en: 'Strengths' },
+  's6.title': { zh: '四大核心优势', en: 'Four Core Advantages' },
+  's6.card1Title': { zh: '结构化的辨证知识', en: 'Structured Pattern Knowledge' },
+  's6.card1Body': { zh: '证型是有限集合（约 200-400 种），本质是"模式匹配"。结构化后 AI 判断准确率大幅提升。', en: 'Patterns are a finite set (~200-400 types), essentially pattern matching. Structuring dramatically improves AI accuracy.' },
+  's6.card2Title': { zh: '步骤化推理', en: 'Step-by-Step Reasoning' },
+  's6.card2Body': { zh: '复杂辨证拆解为 4 个简单步骤。每步 AI 只做一件事：采集 → 检索 → 对比 → 建议。', en: 'Complex differentiation broken into 4 steps. AI does one thing per step: collect → retrieve → compare → recommend.' },
+  's6.card3Title': { zh: '规则校验兜底', en: 'Rule-Based Validation' },
+  's6.card3Body': { zh: 'AI 输出后，系统自动检查：证型与方药是否匹配？舌象与脉象是否矛盾？错误自动拦截。', en: 'After AI output, the system auto-checks: pattern-formula match? tongue-pulse consistency? Errors are caught automatically.' },
+  's6.card4Title': { zh: '持续迭代', en: 'Continuous Iteration' },
+  's6.card4Body': { zh: '新增证型、优化鉴别逻辑只需更新知识库，完全不依赖模型升级。迭代周期从天缩短到小时。', en: 'Adding patterns or optimizing logic only requires updating the knowledge base — no model upgrade needed.' },
+
+  's7.label': { zh: 'Quality', en: 'Quality' },
+  's7.title': { zh: '预期效果', en: 'Expected Results' },
+  's7.body': { zh: '数据质量决定系统上限——知识库越完善，诊断越准确', en: 'Data quality determines the ceiling — the richer the knowledge base, the more accurate the diagnosis' },
+  's7.gauge1Label': { zh: '典型单一证型<br><span style="opacity:.5;font-size:.75rem;">症状完整</span>', en: 'Typical Single Pattern<br><span style="opacity:.5;font-size:.75rem;">Complete symptoms</span>' },
+  's7.gauge2Label': { zh: '常见复合证型<br><span style="opacity:.5;font-size:.75rem;">症状完整</span>', en: 'Common Combined Pattern<br><span style="opacity:.5;font-size:.75rem;">Complete symptoms</span>' },
+  's7.gauge3Label': { zh: '信息不完整<br><span style="opacity:.5;font-size:.75rem;">缺舌脉</span>', en: 'Incomplete Info<br><span style="opacity:.5;font-size:.75rem;">Missing tongue/pulse</span>' },
+  's7.gauge4Label': { zh: '复杂/罕见证型<br><span style="opacity:.5;font-size:.75rem;">保留诊断</span>', en: 'Complex/Rare Pattern<br><span style="opacity:.5;font-size:.75rem;">Reserved diagnosis</span>' },
+  's7.footnote': { zh: '⚠️ 系统定位为"辅助参考"，最终诊断权始终在医师手中', en: '⚠️ System is for auxiliary reference only — final diagnosis always rests with the physician' },
+
+  's8.label': { zh: 'Vision', en: 'Vision' },
+  's8.title': { zh: '让每一位中医师<br>都拥有一个<span class="accent">可靠的数字副手</span>', en: 'Every TCM Practitioner<br>Deserves a <span class="accent">Reliable Digital Assistant</span>' },
+  's8.card1Title': { zh: '建知识库', en: 'Build KB' },
+  's8.card1Body': { zh: '梳理结构化辨证图谱，打好数据基础', en: 'Create structured differentiation maps, lay the data foundation' },
+  's8.card2Title': { zh: '搭推理链', en: 'Build Reasoning' },
+  's8.card2Body': { zh: '设计采集→检索→对比→建议的多步流程', en: 'Design collect→retrieve→compare→recommend pipeline' },
+  's8.card3Title': { zh: '加校验层', en: 'Add Validation' },
+  's8.card3Body': { zh: '规则拦截明显错误，守住安全底线', en: 'Rule-based checks catch errors, maintain safety baseline' },
+  's8.body': { zh: '数据层 90 分 + 编排层 80 分 = 模型只要有 60 分，就能达到接近可用的辅助诊断水平', en: 'Data layer 90 + orchestration 80 = even a model scoring 60 can deliver near-usable diagnostic assistance' }
+};
+
+let currentLang = 'zh';
+
+function applyLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (translations[key] && translations[key][lang]) {
+      el.textContent = translations[key][lang];
+    }
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.dataset.i18nHtml;
+    if (translations[key] && translations[key][lang]) {
+      el.innerHTML = translations[key][lang];
+    }
+  });
+  document.querySelectorAll('.lang-opt').forEach(el => {
+    el.classList.toggle('active', el.dataset.lang === lang);
+  });
+}
+
+function toggleLang() {
+  const next = currentLang === 'zh' ? 'en' : 'zh';
+  applyLang(next);
+}
 </script>
 
 </body>
