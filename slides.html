@@ -950,36 +950,36 @@
    i18n / Bilingual Support
    ============================================== */
 const translations = {
-  's1.label': { zh: 'TCM · AI 辅助诊断', en: 'TCM · AI-Assisted Diagnosis' },
-  's1.title': { zh: '<span class="accent">中医辨证</span> 智能助手', en: '<span class="accent">TCM Pattern</span> Intelligence Assistant' },
-  's1.subtitle': { zh: '基于本地部署 AI + 结构化知识库的中医辅助诊断系统<br>让每一位中医师都拥有一个可靠的"数字副手"', en: 'An AI-assisted TCM diagnosis system powered by local AI + structured knowledge base<br>Every TCM practitioner deserves a reliable digital assistant' },
+  's1.label': { zh: '功能医学 · AI 健康评估', en: 'Functional Medicine · AI Health Assessment' },
+  's1.title': { zh: '<span class="accent">功能医学</span> 智能评估助手', en: '<span class="accent">Functional Medicine</span> Intelligence Assistant' },
+  's1.subtitle': { zh: '基于本地部署 AI + 结构化知识库的功能医学健康评估系统<br>让每一位健康管理师都拥有一个可靠的数据助手', en: 'An AI-powered functional medicine health optimization system with structured knowledge base<br>Every health practitioner deserves a reliable digital assistant' },
   's1.tagline': { zh: '轻量 · 离线 · 可落地', en: 'Lightweight · Offline · Deployable' },
 
   's2.label': { zh: 'Why', en: 'Why' },
-  's2.title': { zh: '中医诊断的挑战', en: 'The Challenge of TCM Diagnosis' },
-  's2.body': { zh: '辨证论治是中医的核心，但现实中有三个突出的痛点：', en: 'Pattern differentiation is the core of TCM, but three key pain points exist:' },
-  's2.item1': { zh: '<strong>经验断层</strong> —— 青年医师缺乏临床积累，辨证准确性不稳定', en: '<strong>Experience gap</strong> — Junior practitioners lack clinical exposure, diagnosis accuracy is inconsistent' },
-  's2.item2': { zh: '<strong>信息不全</strong> —— 问诊容易遗漏关键信息（舌象、脉象等），影响诊断质量', en: '<strong>Incomplete info</strong> — Key details (tongue, pulse) are often missed during inquiry, affecting quality' },
-  's2.item3': { zh: '<strong>AI 不可靠</strong> —— 通用大模型"幻觉"严重，直接给出中药方剂存在安全隐患', en: '<strong>Unreliable AI</strong> — General LLMs hallucinate, making direct formula recommendations risky' },
+  's2.title': { zh: '功能医学健康评估的挑战', en: 'The Challenge of Functional Medicine Assessment' },
+  's2.body': { zh: '功能医学关注的是人体系统的整体平衡，但现实中有三个突出的痛点：', en: 'Functional medicine focuses on whole-system balance, but three key pain points exist:' },
+  's2.item1': { zh: '<strong>经验断层</strong> —— 从业者缺乏整合多系统生物标志物的临床经验', en: '<strong>Experience gap</strong> — Practitioners lack integrated multi-system biomarker analysis experience' },
+  's2.item2': { zh: '<strong>信息不全</strong> —— 问诊容易遗漏关键生活方式和生物标志物信息', en: '<strong>Incomplete info</strong> — Key lifestyle and biomarker data is often missed during intake' },
+  's2.item3': { zh: '<strong>AI 不可靠</strong> —— 通用大模型"幻觉"严重，直接给出干预方案存在安全隐患', en: '<strong>Unreliable AI</strong> — General LLMs hallucinate, making direct protocol recommendations risky' },
 
   's3.label': { zh: 'What', en: 'What' },
   's3.title': { zh: '我们的方案：<span class="accent-green">AI + 知识库</span>', en: 'Our Solution: <span class="accent-green">AI + Knowledge Base</span>' },
   's3.subtitle': { zh: '不依赖大模型"死记硬背"，而是让 AI 学会"查资料"', en: 'Instead of making the LLM memorize, we teach it to look things up' },
-  's3.card1Title': { zh: '结构化中医知识库', en: 'Structured TCM Knowledge Base' },
-  's3.card1Body': { zh: '把辨证知识整理成"症状→证型→方药"的对照表，AI 遇到患者时先查表、再判断。', en: 'Organize pattern knowledge into symptom→pattern→formula lookup tables. AI checks the table before deciding.' },
+  's3.card1Title': { zh: '结构化功能医学知识库', en: 'Structured Functional Medicine Knowledge Base' },
+  's3.card1Body': { zh: '把健康评估知识整理成"症状→健康模式→干预方案"的对照表，AI 遇到客户时先查表、再判断。', en: 'Organize health assessment knowledge into symptom→pattern→protocol lookup tables. AI checks the table before deciding.' },
   's3.card2Title': { zh: '本地小模型', en: 'Local Small Model' },
   's3.card2Body': { zh: '7B 参数的小模型部署在本地，无需联网、数据不出院、<strong>零成本 API 调用</strong>。', en: 'A 7B-parameter model runs locally — no internet needed, data stays on-premise, <strong>zero API costs</strong>.' },
 
   's4.label': { zh: 'How', en: 'How' },
   's4.title': { zh: '工作流程', en: 'Workflow' },
   's4.body': { zh: '四步走，每一步都让 AI 做它最擅长的事', en: 'Four steps, each letting AI do what it does best' },
-  's4.flow1': { zh: '🗣 患者主诉', en: '🗣 Patient Complaints' },
+  's4.flow1': { zh: '🗣 客户主诉', en: '🗣 Client Complaints' },
   's4.flow2': { zh: '📋 症状<br><small style="opacity:.5;">标准化</small>', en: '📋 Symptom<br><small style="opacity:.5;">Standardization</small>' },
   's4.flow3': { zh: '🔍 知识库<br><small style="opacity:.5;">匹配</small>', en: '🔍 Knowledge Base<br><small style="opacity:.5;">Matching</small>' },
-  's4.flow4': { zh: '✅ 诊断<br><small style="opacity:.5;">建议</small>', en: '✅ Diagnosis<br><small style="opacity:.5;">Recommendation</small>' },
-  's4.step1': { zh: '系统先<strong>追问</strong>收集完整症状、舌象、脉象', en: 'System <strong>inquires</strong> to collect complete symptoms, tongue, and pulse' },
-  's4.step2': { zh: '从<strong>结构化知识库</strong>中匹配最可能的证型', en: 'Match most likely patterns from the <strong>structured knowledge base</strong>' },
-  's4.step3': { zh: 'AI 基于对比表<strong>选择最符合</strong>的证型与建议', en: 'AI <strong>selects the best-matching</strong> pattern and recommendations from a comparison table' },
+  's4.flow4': { zh: '✅ 评估<br><small style="opacity:.5;">建议</small>', en: '✅ Assessment<br><small style="opacity:.5;">Recommendation</small>' },
+  's4.step1': { zh: '系统先<strong>追问</strong>收集完整症状、生物标志物、生活方式', en: 'System <strong>inquires</strong> to collect complete symptoms, biomarkers, and lifestyle' },
+  's4.step2': { zh: '从<strong>结构化知识库</strong>中匹配最可能的健康模式', en: 'Match most likely health patterns from the <strong>structured knowledge base</strong>' },
+  's4.step3': { zh: 'AI 基于对比表<strong>选择最符合</strong>的健康模式与建议', en: 'AI <strong>selects the best-matching</strong> health pattern and recommendations from a comparison table' },
 
   's5.label': { zh: 'Why This', en: 'Why This' },
   's5.title': { zh: '为什么这样设计', en: 'Why This Design' },
@@ -994,36 +994,37 @@ const translations = {
 
   's6.label': { zh: 'Strengths', en: 'Strengths' },
   's6.title': { zh: '四大核心优势', en: 'Four Core Advantages' },
-  's6.card1Title': { zh: '结构化的辨证知识', en: 'Structured Pattern Knowledge' },
-  's6.card1Body': { zh: '证型是有限集合（约 200-400 种），本质是"模式匹配"。结构化后 AI 判断准确率大幅提升。', en: 'Patterns are a finite set (~200-400 types), essentially pattern matching. Structuring dramatically improves AI accuracy.' },
+  's6.card1Title': { zh: '结构化的健康评估知识', en: 'Structured Assessment Knowledge' },
+  's6.card1Body': { zh: '健康模式是有限集合（约 200-400 种），本质是"模式匹配"。结构化后 AI 判断准确率大幅提升。', en: 'Health patterns are a finite set (~200-400 types), essentially pattern matching. Structuring dramatically improves AI accuracy.' },
   's6.card2Title': { zh: '步骤化推理', en: 'Step-by-Step Reasoning' },
-  's6.card2Body': { zh: '复杂辨证拆解为 4 个简单步骤。每步 AI 只做一件事：采集 → 检索 → 对比 → 建议。', en: 'Complex differentiation broken into 4 steps. AI does one thing per step: collect → retrieve → compare → recommend.' },
+  's6.card2Body': { zh: '复杂健康评估拆解为 4 个简单步骤。每步 AI 只做一件事：采集 → 检索 → 对比 → 建议。', en: 'Complex health assessment broken into 4 steps. AI does one thing per step: collect → retrieve → compare → recommend.' },
   's6.card3Title': { zh: '规则校验兜底', en: 'Rule-Based Validation' },
-  's6.card3Body': { zh: 'AI 输出后，系统自动检查：证型与方药是否匹配？舌象与脉象是否矛盾？错误自动拦截。', en: 'After AI output, the system auto-checks: pattern-formula match? tongue-pulse consistency? Errors are caught automatically.' },
+  's6.card3Body': { zh: 'AI 输出后，系统自动检查：健康模式与干预方案是否匹配？生物标志物是否一致？错误自动拦截。', en: 'After AI output, the system auto-checks: pattern-protocol match? biomarker consistency? Errors are caught automatically.' },
   's6.card4Title': { zh: '持续迭代', en: 'Continuous Iteration' },
-  's6.card4Body': { zh: '新增证型、优化鉴别逻辑只需更新知识库，完全不依赖模型升级。迭代周期从天缩短到小时。', en: 'Adding patterns or optimizing logic only requires updating the knowledge base — no model upgrade needed.' },
+  's6.card4Body': { zh: '新增健康模式、优化评估逻辑只需更新知识库，完全不依赖模型升级。迭代周期从天缩短到小时。', en: 'Adding health patterns or optimizing logic only requires updating the knowledge base — no model upgrade needed.' },
 
   's7.label': { zh: 'Quality', en: 'Quality' },
   's7.title': { zh: '预期效果', en: 'Expected Results' },
   's7.body': { zh: '数据质量决定系统上限——知识库越完善，诊断越准确', en: 'Data quality determines the ceiling — the richer the knowledge base, the more accurate the diagnosis' },
-  's7.gauge1Label': { zh: '典型单一证型<br><span style="opacity:.5;font-size:.75rem;">症状完整</span>', en: 'Typical Single Pattern<br><span style="opacity:.5;font-size:.75rem;">Complete symptoms</span>' },
-  's7.gauge2Label': { zh: '常见复合证型<br><span style="opacity:.5;font-size:.75rem;">症状完整</span>', en: 'Common Combined Pattern<br><span style="opacity:.5;font-size:.75rem;">Complete symptoms</span>' },
-  's7.gauge3Label': { zh: '信息不完整<br><span style="opacity:.5;font-size:.75rem;">缺舌脉</span>', en: 'Incomplete Info<br><span style="opacity:.5;font-size:.75rem;">Missing tongue/pulse</span>' },
-  's7.gauge4Label': { zh: '复杂/罕见证型<br><span style="opacity:.5;font-size:.75rem;">保留诊断</span>', en: 'Complex/Rare Pattern<br><span style="opacity:.5;font-size:.75rem;">Reserved diagnosis</span>' },
-  's7.footnote': { zh: '⚠️ 系统定位为"辅助参考"，最终诊断权始终在医师手中', en: '⚠️ System is for auxiliary reference only — final diagnosis always rests with the physician' },
+  's7.gauge1Label': { zh: '典型单一健康模式<br><span style="opacity:.5;font-size:.75rem;">数据完整</span>', en: 'Typical Single Pattern<br><span style="opacity:.5;font-size:.75rem;">Complete data</span>' },
+  's7.gauge2Label': { zh: '常见复合健康模式<br><span style="opacity:.5;font-size:.75rem;">数据完整</span>', en: 'Common Combined Pattern<br><span style="opacity:.5;font-size:.75rem;">Complete data</span>' },
+  's7.gauge3Label': { zh: '信息不完整<br><span style="opacity:.5;font-size:.75rem;">缺生物标志物</span>', en: 'Incomplete Info<br><span style="opacity:.5;font-size:.75rem;">Missing biomarkers</span>' },
+  's7.gauge4Label': { zh: '复杂/罕见模式<br><span style="opacity:.5;font-size:.75rem;">保留评估</span>', en: 'Complex/Rare Pattern<br><span style="opacity:.5;font-size:.75rem;">Reserved assessment</span>' },
+  's7.footnote': { zh: '⚠️ 系统定位为"辅助参考"，最终判断权始终在健康管理师手中', en: '⚠️ System is for auxiliary reference only — final assessment always rests with the practitioner' },
 
   's8.label': { zh: 'Vision', en: 'Vision' },
-  's8.title': { zh: '让每一位中医师<br>都拥有一个<span class="accent">可靠的数字副手</span>', en: 'Every TCM Practitioner<br>Deserves a <span class="accent">Reliable Digital Assistant</span>' },
+  's8.title': { zh: '让每一位健康管理师<br>都拥有一个<span class="accent">可靠的数据助手</span>', en: 'Every Health Practitioner<br>Deserves a <span class="accent">Reliable Data Assistant</span>' },
   's8.card1Title': { zh: '建知识库', en: 'Build KB' },
-  's8.card1Body': { zh: '梳理结构化辨证图谱，打好数据基础', en: 'Create structured differentiation maps, lay the data foundation' },
+  's8.card1Body': { zh: '梳理结构化健康评估知识图谱，打好数据基础', en: 'Create structured health assessment maps, lay the data foundation' },
   's8.card2Title': { zh: '搭推理链', en: 'Build Reasoning' },
   's8.card2Body': { zh: '设计采集→检索→对比→建议的多步流程', en: 'Design collect→retrieve→compare→recommend pipeline' },
   's8.card3Title': { zh: '加校验层', en: 'Add Validation' },
   's8.card3Body': { zh: '规则拦截明显错误，守住安全底线', en: 'Rule-based checks catch errors, maintain safety baseline' },
-  's8.body': { zh: '数据层 90 分 + 编排层 80 分 = 模型只要有 60 分，就能达到接近可用的辅助诊断水平', en: 'Data layer 90 + orchestration 80 = even a model scoring 60 can deliver near-usable diagnostic assistance' }
+  's8.body': { zh: '数据层 90 分 + 编排层 80 分 = 模型只要有 60 分，就能达到接近可用的辅助评估水平', en: 'Data layer 90 + orchestration 80 = even a model scoring 60 can deliver near-usable health assessment assistance' }
 };
 
-let currentLang = 'zh';
+let currentLang = 'en';
+document.addEventListener('DOMContentLoaded', () => applyLang('en'));
 
 function applyLang(lang) {
   currentLang = lang;
